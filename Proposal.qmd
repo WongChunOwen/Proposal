@@ -50,3 +50,8 @@ p
 # Conclusion
 
 ###### References
+[To improve on](https://www.ncei.noaa.gov/access/monitoring/monthly-report/global/202313)   
+
+[Country Codes](https://www.iban.com/country-codes)
+
+[Ideas](https://climate.nasa.gov/vital-signs/global-temperature/?intent=121)
