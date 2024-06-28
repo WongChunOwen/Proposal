@@ -17,3 +17,19 @@ library(tidyverse)
 ```
 
 # Original Data Visualization in Climate Change
+# Critical Assessment of the Original Visualization
+# Proposed Improvements
+
+## Choropleth Map Integration
+
+# Data Cleaning
+
+## Pivoting (if any)
+
+## Joining
+
+## Convert Year
+
+# Conclusion
+
+###### References
