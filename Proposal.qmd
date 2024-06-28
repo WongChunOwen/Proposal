@@ -12,7 +12,7 @@ description: "Visualising the climate change over time"
 
 For this document, the following packages are required:
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 library(tidyverse)
 ```
 
