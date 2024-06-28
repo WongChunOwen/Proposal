@@ -1,0 +1,19 @@
+---
+title: "Team Project Proposal"
+format: html
+editor: visual
+authors: [WONG CHUN OWEN, 
+          ONG JU EN NIGEL,
+          SHERWYN CHAN YIN KIT,
+          ASHSYAHID BIN HUSSIN,
+          LIM XUAN YU]
+description: "Visualising the climate change over time"
+---
+
+For this document, the following packages are required:
+
+```{r}
+library(tidyverse)
+```
+
+# Original Data Visualization in Climate Change
