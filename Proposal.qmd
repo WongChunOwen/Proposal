@@ -20,7 +20,6 @@ library(tidyverse)
 ```{r}
 library(dplyr)
 library(plotly)
-library(htmlwidgets)
 
 
 
