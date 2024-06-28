@@ -17,6 +17,24 @@ library(tidyverse)
 ```
 
 # Original Data Visualization in Climate Change
+```{r}
+library(dplyr)
+library(plotly)
+library(htmlwidgets)
+
+
+
+df <- read.csv("graph.csv")
+
+
+
+p <- plot_geo(df, locationmode = 'world') %>%
+  add_trace(    z = ~df$new_cases_per_million, locations = df$code, frame=~df$start_of_week,
+                color = ~df$new_cases_per_million)
+
+p
+
+```
 # Critical Assessment of the Original Visualization
 # Proposed Improvements
 
