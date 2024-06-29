@@ -71,7 +71,14 @@ print(nan_check_initial)
 rows_with_nan_initial <- monthly_avg_all_countries_initial[apply(monthly_avg_all_countries_initial, 1, function(row) any(is.na(row))), ]
 print(rows_with_nan_initial)
 
-# Function to fill NaN values
+# Remove rows with "Antarctica" from the dataset as the entire dataset for it is NaN
+monthly_avg_all_countries_initial <- monthly_avg_all_countries_initial |> filter(Country != "Antarctica")
+
+# Verify that "Antarctica" rows are removed
+print(monthly_avg_all_countries_initial |> filter(Country == "Antarctica"))
+
+# Function to fill NaN values using zoo library
+# It is used for filling missing values through linear interpolation and forward/backward filling, ensuring continuous and complete temperature records.
 fill_nan <- function(df) {
   df |>
     group_by(Country) |>
@@ -93,12 +100,7 @@ fill_with_window_month_median <- function(df) {
                                   if (is.na(monthly_avg[i])) {
                                     start_year <- year[i] - 5
                                     end_year <- year[i] + 5
-                                    window_median <- median(df$monthly_avg[df$Country == Country[i] & 
-                                                                          df$month == month[i] &
-                                                                          df$year >= start_year & 
-                                                                          df$year <= end_year & 
-                                                                          !is.na(df$monthly_avg)], 
-                                                          na.rm = TRUE)
+                                    window_median <- median(df$monthly_avg[df$Country == Country[i] & df$month == month[i] & df$year >= start_year &df$year <= end_year & !is.na(df$monthly_avg)], na.rm = TRUE)
                                     return(window_median)
                                   } else {
                                     return(monthly_avg[i])
@@ -115,7 +117,7 @@ monthly_avg_all_countries_median <- fill_with_window_month_median(monthly_avg_al
 monthly_avg_all_countries_median <- monthly_avg_all_countries_median |>
   mutate(monthly_avg = round(monthly_avg, 2))
 
-# Check for remaining NaN values in the median imputed dataset
+# Checking for remaining NaN values in the median imputed dataset
 nan_check_median <- sapply(monthly_avg_all_countries_median, function(x) sum(is.na(x)))
 print(nan_check_median)
 
