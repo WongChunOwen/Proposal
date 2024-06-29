@@ -45,6 +45,11 @@ p
 
 ## Joining
 
+```{r}
+code_df <- read.csv("country_codes.csv")
+```
+
+
 ## Convert Year
 
 # Conclusion
