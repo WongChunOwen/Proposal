@@ -10,13 +10,17 @@ authors: [WONG CHUN OWEN,
 description: "Visualising the climate change over time"
 ---
 
+
 For this document, the following packages are required:
+
 
 ```{r, message = FALSE, warning = FALSE}
 library(tidyverse)
 ```
 
+
 # Original Data Visualization in Climate Change
+
 
 ```{r}
 library(dplyr)
@@ -132,6 +136,7 @@ print(afghanistan_1839_median)
 
 ```
 
+
 # Critical Assessment of the Original Visualization
 
 # Proposed Improvements
@@ -143,6 +148,7 @@ print(afghanistan_1839_median)
 ## Pivoting (if any)
 
 ## Joining
+
 ```{r}
 
 country_codes <- read_csv("country_codes.csv")
@@ -153,36 +159,13 @@ country_codes$Country <- gsub("Russian Federation", "Russia", country_codes$Coun
 country_codes$Country <- gsub("United States of America", "United States", country_codes$Country)
 country_codes$Country <- gsub("United Kingdom of Great Britain and Northern Ireland", "United Kingdom", country_codes$Country)
 country_codes$Country <- gsub("Viet Nam", "Vietnam", country_codes$Country)
-country_codes$Country <- gsub("Antigua and Barbuda", "	Antigua", country_codes$Country)
-country_codes$Country <- gsub("Bonaire, Sint Eustatius and Saba", "Bonaire, Saint Eustatius And Saba", country_codes$Country)
-country_codes$Country <- gsub("Bosnia and Herzegovina", "Bosnia And Herzegovina", country_codes$Country)
-country_codes$Country <- gsub("Myanmar", "Burma", country_codes$Country)
-country_codes$Country <- gsub("Cabo Verde", "Cape Verde", country_codes$Country)
-country_codes$Country <- gsub("Czechia", "Czech Republic", country_codes$Country)
-country_codes$Country <- gsub("Côte d'Ivoire", "Côte D'Ivoire", country_codes$Country)
-country_codes$Country <- gsub("Micronesia", "Federated States Of Micronesia", country_codes$Country)
-country_codes$Country <- gsub("French Southern Territories", "French Southern And Antarctic Lands", country_codes$Country)
-country_codes$Country <- gsub("Guinea-Bissau", "Guinea Bissau", country_codes$Country)
-country_codes$Country <- gsub("Heard Island and McDonald", "Heard Island And Mcdonald", country_codes$Country)
-country_codes$Country <- gsub("Isle of Man", "Isle Of Man", country_codes$Country)
-country_codes$Country <- gsub("Macao", "Macau", country_codes$Country)
-country_codes$Country <- gsub("Republic of North Macedonia", "Macedonia", country_codes$Country)
-country_codes$Country <- gsub("Palestine, State of", "Palestina", country_codes$Country)
-country_codes$Country <- gsub("Saint Kitts and Nevis", "Saint Kitts And Nevis", country_codes$Country)
-country_codes$Country <- gsub("Saint Pierre and Miquelon", "Saint Pierre And Miquelon", country_codes$Country)
-country_codes$Country <- gsub("Saint Vincent and The Grenadines", "Saint Vincent And The Grenadines", country_codes$Country)
-country_codes$Country <- gsub("Sao Tome and Principe", "Sao Tome And Principe", country_codes$Country)
-country_codes$Country <- gsub("South Georgia And The South Sandwich", "South Georgia And The South Sandwich Isla", country_codes$Country)
-country_codes$Country <- gsub("Svalbard and Jan Mayen", "Svalbard And Jan Mayen", country_codes$Country)
-country_codes$Country <- gsub("Syrian Arab Republic", "Syria", country_codes$Country)
-country_codes$Country <- gsub("Tanzania, United Republic of", "Tanzania", country_codes$Country)
-country_codes$Country <- gsub("Timor-Leste", "Timor Leste", country_codes$Country)
-country_codes$Country <- gsub("Trinidad and Tobago", "Trinidad And Tobago", country_codes$Country)
-country_codes$Country <- gsub("Turks and Caicos Islands", "Turks And Caicos Islands", country_codes$Country)
+
+
+
+
 
 monthly_avg_all_countries_median$Country <- gsub("\\s*\\([^)]*\\)|\\s*\\[[^]]*\\]|\\s+Islands", "",monthly_avg_all_countries_median$Country)
 
-monthly_avg_all_countries_median$Country <- gsub("Antigua And Barbuda", "	Antigua", monthly_avg_all_countries_median$Country)
 
 joinedDT <-
   full_join(
@@ -190,22 +173,17 @@ joinedDT <-
     country_codes,
     by = c("Country")
   )
+df <- df %>% filter(Country != 'Asia')
 
-#df <- df %>% filter(Country != 'Asia' & Country != 'Africa'& Country != 'Baker Island' & Country != 'Europe')
-
-missing_data <- joinedDT %>% filter(is.na(joinedDT$`Alpha2`))
+missing_data <- df %>% filter(is.na(df$`Alpha-2 Code...2`))
 
 unique_countries <- missing_data %>%
   distinct(Country, .keep_all = TRUE)
 
 # Print the unique countries
-#print(unique_countries)
-
-countries_cleaned <- joinedDT[!is.na(joinedDT$Alpha3), ]
-
-# Check the cleaned data
-print(countries_cleaned)
+print(unique_countries)
 ```
+
 
 ## Convert Year
 
@@ -218,3 +196,4 @@ print(countries_cleaned)
 [Country Codes](https://www.iban.com/country-codes)
 
 [Ideas](https://climate.nasa.gov/vital-signs/global-temperature/?intent=121)
+
