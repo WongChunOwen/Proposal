@@ -9,7 +9,6 @@ authors: [WONG CHUN OWEN,
           ASHSYAHID BIN HUSSIN,
           LIM XUAN YU]
 description: "Visualising the climate change over time"
-
 ---
 
 For this document, the following packages are required:
@@ -27,6 +26,30 @@ The visualization spans over a century of data, capturing periods of significant
 ![Global Land and Ocean](global_and_sea.png){#fig-GlobalLandOcean}
 
 # Critical Assessment of the Original Visualization
+
+The plot visualizes two variables: global temperature anomalies (quantitative) and time (categorical/DateTime). The x-axis represents time in years, while the y-axis shows the temperature anomalies in Celsius and Fahrenheit. The plot is intuitive and effectively communicates the overall trend of increasing global temperatures over time.
+
+The chart is clear and easy to read, with temperature anomalies clearly dilineated by year. The use of blue and red colors to differentiate periods of negative and positive value temperature anomalies from the 20th century average of 13.9°C is contributes to the clarity of the plot. 
+
+The axes are well-labeled, and the inclusion of temperature anomalies in both Celsius and Fahrenheit on the right axis helps cater to different audiences. The chart covers a long historical period, providing a comprehensive view of temperature changes over time.
+
+Overall the plot is effective in communicating the relationship between global temperature anomalies and time. However, there are shortcomings that the team has identified:
+
+1. **Interactivity**: The visualization lacks interactive features that would allow users to explore the data further, such as zooming in on specific time frames or regions, filtering data, or viewing additional information on specific data points.
+
+2. **Lack of Detail**: The chart does not provide specific values for each year, making it difficult to discern exact temperature anomalies.
+
+3. **Legend**: The chart lacks a legend to explain the color coding for positive and negative temperature anomalies.
+
+4. **Background**: The choice of background color may not be optimal for all users, and providing options for different color schemes would improve accessibility.
+
+5. **Color choice**: The use of red and blue colors to represent positive and negative temperature anomalies may not be accessible to colorblind users.
+
+6. **Cluttered data**: Displaying data in long time frame from 1850 to 2023 in a single chart may make it difficult to discern specific trends or patterns.
+
+7. **Context**: The visualization lacks context on different factors that may influence global temperature anomalies, such as regional variations, country-specific data, or the impact of specific events.
+
+The observations above highlight areas where the original visualization could be improved to enhance user experience and provide a more comprehensive understanding of the data.
 
 # Proposed Improvements
 
