@@ -2,12 +2,14 @@
 title: "Team Project Proposal"
 format: html
 editor: visual
+embed-resources: true
 authors: [WONG CHUN OWEN, 
           ONG JU EN NIGEL,
           SHERWYN CHAN YIN KIT,
           ASHSYAHID BIN HUSSIN,
           LIM XUAN YU]
 description: "Visualising the climate change over time"
+
 ---
 
 For this document, the following packages are required:
@@ -17,24 +19,15 @@ library(tidyverse)
 ```
 
 # Original Data Visualization in Climate Change
-```{r}
-library(dplyr)
-library(plotly)
 
+The ongoing dialogue surrounding climate change has increasingly focused on the empirical data that underscores global temperature trends. [NOAA](https://www.ncei.noaa.gov/access/monitoring/monthly-report/global/202313){target="_blank"}'s recent visualization of global temperature anomalies from 1880 to 2023 offers a comprehensive view of the planet's warming trajectory. This project aims to elucidate the correlation between anthropogenic activities and climate change, highlighting how industrialization and carbon emissions have influenced global temperatures.
 
+The visualization spans over a century of data, capturing periods of significant climatic shifts. Despite its clarity in depicting long-term trends, the inclusion of interactive features (as illustrated in @fig-GlobalLandOcean) enhances user engagement with the data. However, there is potential for further refinement. Incorporating more dynamic elements such as temporal sliders, geospatial overlays, and chloropleth map integration could offer a more nuanced understanding of how specific policies and global events impact climate change on a regional and global scale.
 
-df <- read.csv("graph.csv")
+![Global Land and Ocean](global_and_sea.png){#fig-GlobalLandOcean}
 
-
-
-p <- plot_geo(df, locationmode = 'world') %>%
-  add_trace(    z = ~df$new_cases_per_million, locations = df$code, frame=~df$start_of_week,
-                color = ~df$new_cases_per_million)
-
-p
-
-```
 # Critical Assessment of the Original Visualization
+
 # Proposed Improvements
 
 ## Choropleth Map Integration
@@ -49,13 +42,15 @@ p
 code_df <- read.csv("country_codes.csv")
 ```
 
-
 ## Convert Year
 
 # Conclusion
 
+The data is now ready for visualization. The next step will be to create a plot that can effectively communicate the relationship between global temperature anomalies and anthropogenic activities over time, and additionally allow curious readers to explore the data even further using interactivity. We will use Plotly to create the plot and add interactivity.
+
 ###### References
-[To improve on](https://www.ncei.noaa.gov/access/monitoring/monthly-report/global/202313)   
+
+[To improve on](https://www.ncei.noaa.gov/access/monitoring/monthly-report/global/202313)
 
 [Country Codes](https://www.iban.com/country-codes)
 
