@@ -30,3 +30,9 @@ Languages used in this project:
 
 `imgs`:
 - folder to store images used in the project.
+
+## External Resources
+
+- <a href="https://www.youtube.com/watch?v=nR8heBb8CME&t=574s" target="_blank">[VIDEO] Introduction to the plotly Package in R</a>
+- <a href="https://www.youtube.com/watch?v=RrtqBYLf404" target="_blank">[VIDEO] R Maps: Beautiful Interactive Choropleth & Scatter Maps with Plotly</a>
+- <a href="https://quarto.org/docs/output-formats/typst.html" target="_blank">[QUARTO WEBSITE] Typst Basics</a>
