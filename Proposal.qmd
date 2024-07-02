@@ -9,7 +9,6 @@ authors: [WONG CHUN OWEN,
           ASHSYAHID BIN HUSSIN,
           LIM XUAN YU]
 description: "Visualising the climate change over time"
-
 ---
 
 For this document, the following packages are required:
