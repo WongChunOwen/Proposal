@@ -145,6 +145,7 @@ print(afghanistan_1839_median)
 ## Pivoting (if any)
 
 ## Joining
+
 ```{r}
 
 country_codes <- read_csv("country_codes.csv")
