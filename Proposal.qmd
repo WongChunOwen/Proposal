@@ -210,7 +210,7 @@ knitr::kable(unique_countries, caption = "List of Unique Countries with no Count
 countries_cleaned <- joinedDT[!is.na(joinedDT$Alpha3), ]
 
 # Check the cleaned data
-print(countries_cleaned)
+knitr::kable(head(countries_cleaned), caption = "Cleaned Data Joined with Country Codes")
 
 ```
 

@@ -3604,22 +3604,78 @@ Figure 1: Global Land and Ocean
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>countries_cleaned <span class="ot">&lt;-</span> joinedDT[<span class="sc">!</span><span class="fu">is.na</span>(joinedDT<span class="sc">$</span>Alpha3), ]</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the cleaned data</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(countries_cleaned)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 545,112 × 7
-   Country      year month monthly_avg Alpha2 Alpha3 Numeric
-   &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;    &lt;dbl&gt;
- 1 Afghanistan  1838 04          13.0  AF     AFG          4
- 2 Afghanistan  1838 05          18.5  AF     AFG          4
- 3 Afghanistan  1838 06          24.0  AF     AFG          4
- 4 Afghanistan  1838 07          26.9  AF     AFG          4
- 5 Afghanistan  1838 08          24.9  AF     AFG          4
- 6 Afghanistan  1838 09          19.0  AF     AFG          4
- 7 Afghanistan  1838 10          13.4  AF     AFG          4
- 8 Afghanistan  1838 11           7.47 AF     AFG          4
- 9 Afghanistan  1838 12           6.99 AF     AFG          4
-10 Afghanistan  1839 01           6.51 AF     AFG          4
-# ℹ 545,102 more rows</code></pre>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(countries_cleaned), <span class="at">caption =</span> <span class="st">&quot;Cleaned Data Joined with Country Codes&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<caption>Cleaned Data Joined with Country Codes</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Country</th>
+<th style="text-align: right;">year</th>
+<th style="text-align: left;">month</th>
+<th style="text-align: right;">monthly_avg</th>
+<th style="text-align: left;">Alpha2</th>
+<th style="text-align: left;">Alpha3</th>
+<th style="text-align: right;">Numeric</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Afghanistan</td>
+<td style="text-align: right;">1838</td>
+<td style="text-align: left;">04</td>
+<td style="text-align: right;">13.01</td>
+<td style="text-align: left;">AF</td>
+<td style="text-align: left;">AFG</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Afghanistan</td>
+<td style="text-align: right;">1838</td>
+<td style="text-align: left;">05</td>
+<td style="text-align: right;">18.48</td>
+<td style="text-align: left;">AF</td>
+<td style="text-align: left;">AFG</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Afghanistan</td>
+<td style="text-align: right;">1838</td>
+<td style="text-align: left;">06</td>
+<td style="text-align: right;">23.95</td>
+<td style="text-align: left;">AF</td>
+<td style="text-align: left;">AFG</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Afghanistan</td>
+<td style="text-align: right;">1838</td>
+<td style="text-align: left;">07</td>
+<td style="text-align: right;">26.88</td>
+<td style="text-align: left;">AF</td>
+<td style="text-align: left;">AFG</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Afghanistan</td>
+<td style="text-align: right;">1838</td>
+<td style="text-align: left;">08</td>
+<td style="text-align: right;">24.94</td>
+<td style="text-align: left;">AF</td>
+<td style="text-align: left;">AFG</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Afghanistan</td>
+<td style="text-align: right;">1838</td>
+<td style="text-align: left;">09</td>
+<td style="text-align: right;">18.98</td>
+<td style="text-align: left;">AF</td>
+<td style="text-align: left;">AFG</td>
+<td style="text-align: right;">4</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </section>
