@@ -25,7 +25,7 @@ The ongoing dialogue surrounding climate change has increasingly focused on the 
 
 The visualization spans over a century of data, capturing periods of significant climatic shifts. Despite its clarity in depicting long-term trends, the inclusion of interactive features (as illustrated in @fig-GlobalLandOcean) enhances user engagement with the data. However, there is potential for further refinement. Incorporating more dynamic elements such as temporal sliders, geospatial overlays, and chloropleth map integration could offer a more nuanced understanding of how specific policies and global events impact climate change on a regional and global scale.
 
-![Global Land and Ocean](global_and_sea.png){#fig-GlobalLandOcean}
+![Global Land and Ocean](imgs/global_and_sea.png){#fig-GlobalLandOcean}
 
 # Critical Assessment of the Original Visualization
 
@@ -131,11 +131,8 @@ print(afghanistan_1839_median)
 
 ```
 
-
-## Pivoting (if any)
-
-## Joining
-```{r}
+## Joining with Country Codes
+```{r, message = FALSE, warning = FALSE}
 
 country_codes <- read_csv("data/country_codes.csv")
 
@@ -145,9 +142,7 @@ country_codes$Country <- gsub("Russian Federation", "Russia", country_codes$Coun
 country_codes$Country <- gsub("United States of America", "United States", country_codes$Country)
 country_codes$Country <- gsub("United Kingdom of Great Britain and Northern Ireland", "United Kingdom", country_codes$Country)
 country_codes$Country <- gsub("Viet Nam", "Vietnam", country_codes$Country)
-country_codes$Country <- gsub("Antigua and Barbuda", "	Antigua", country_codes$Country)
 country_codes$Country <- gsub("Bonaire, Sint Eustatius and Saba", "Bonaire, Saint Eustatius And Saba", country_codes$Country)
-country_codes$Country <- gsub("Bosnia and Herzegovina", "Bosnia And Herzegovina", country_codes$Country)
 country_codes$Country <- gsub("Myanmar", "Burma", country_codes$Country)
 country_codes$Country <- gsub("Cabo Verde", "Cape Verde", country_codes$Country)
 country_codes$Country <- gsub("Czechia", "Czech Republic", country_codes$Country)
@@ -160,21 +155,17 @@ country_codes$Country <- gsub("Isle of Man", "Isle Of Man", country_codes$Countr
 country_codes$Country <- gsub("Macao", "Macau", country_codes$Country)
 country_codes$Country <- gsub("Republic of North Macedonia", "Macedonia", country_codes$Country)
 country_codes$Country <- gsub("Palestine, State of", "Palestina", country_codes$Country)
-country_codes$Country <- gsub("Saint Kitts and Nevis", "Saint Kitts And Nevis", country_codes$Country)
-country_codes$Country <- gsub("Saint Pierre and Miquelon", "Saint Pierre And Miquelon", country_codes$Country)
+
 country_codes$Country <- gsub("Saint Vincent and The Grenadines", "Saint Vincent And The Grenadines", country_codes$Country)
-country_codes$Country <- gsub("Sao Tome and Principe", "Sao Tome And Principe", country_codes$Country)
 country_codes$Country <- gsub("South Georgia And The South Sandwich", "South Georgia And The South Sandwich Isla", country_codes$Country)
-country_codes$Country <- gsub("Svalbard and Jan Mayen", "Svalbard And Jan Mayen", country_codes$Country)
 country_codes$Country <- gsub("Syrian Arab Republic", "Syria", country_codes$Country)
 country_codes$Country <- gsub("Tanzania, United Republic of", "Tanzania", country_codes$Country)
 country_codes$Country <- gsub("Timor-Leste", "Timor Leste", country_codes$Country)
-country_codes$Country <- gsub("Trinidad and Tobago", "Trinidad And Tobago", country_codes$Country)
-country_codes$Country <- gsub("Turks and Caicos Islands", "Turks And Caicos Islands", country_codes$Country)
+country_codes$Country <- gsub(" and ", " And ", country_codes$Country)
+
 
 monthly_avg_all_countries_median$Country <- gsub("\\s*\\([^)]*\\)|\\s*\\[[^]]*\\]|\\s+Islands", "",monthly_avg_all_countries_median$Country)
 
-monthly_avg_all_countries_median$Country <- gsub("Antigua And Barbuda", "	Antigua", monthly_avg_all_countries_median$Country)
 
 joinedDT <-
   full_join(
@@ -183,7 +174,6 @@ joinedDT <-
     by = c("Country")
   )
 
-#df <- df %>% filter(Country != 'Asia' & Country != 'Africa'& Country != 'Baker Island' & Country != 'Europe')
 
 missing_data <- joinedDT %>% filter(is.na(joinedDT$`Alpha2`))
 
@@ -191,16 +181,14 @@ unique_countries <- missing_data %>%
   distinct(Country, .keep_all = TRUE)
 
 # Print the unique countries
-#print(unique_countries)
+# Display the tail of the initial data frame
+knitr::kable(unique_countries, caption = "List of Unique Countries with no Country Codes")
 
 countries_cleaned <- joinedDT[!is.na(joinedDT$Alpha3), ]
 
 # Check the cleaned data
 print(countries_cleaned)
 ```
-
-
-## Convert Year
 
 # Conclusion
 

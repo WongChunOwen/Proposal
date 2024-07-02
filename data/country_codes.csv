@@ -1,4 +1,4 @@
-Country,Alpha-2 Code,Alpha-2 Code,Numeric
+Country,Alpha2,Alpha3,Numeric
 Afghanistan,AF,AFG,4
 Albania,AL,ALB,8
 Algeria,DZ,DZA,12
@@ -116,8 +116,8 @@ Jordan,JO,JOR,400
 Kazakhstan,KZ,KAZ,398
 Kenya,KE,KEN,404
 Kiribati,KI,KIR,296
-Korea (the Democratic People's Republic of),KP,PRK,408
-Korea (the Republic of),KR,KOR,410
+North Korea (the Democratic People's Republic of),KP,PRK,408
+South Korea (the Republic of),KR,KOR,410
 Kuwait,KW,KWT,414
 Kyrgyzstan,KG,KGZ,417
 Lao People's Democratic Republic (the),LA,LAO,418
