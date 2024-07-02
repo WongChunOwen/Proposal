@@ -57,23 +57,23 @@ The observations above highlight areas where the original visualization could be
 
 # Proposed Improvements
 
-The original visualisation will be enhanced with the following features: 
+The original visualisation will be enhanced with the following features:
 
-- **Dynamic Range Slider**: A dynamic range slider will be added, allowing users to zoom into specific periods for detailed analysis or display a timelapse of temperature changes from 1930 to 2023. 
+-   **Dynamic Range Slider**: A dynamic range slider will be added, allowing users to zoom into specific periods for detailed analysis or display a timelapse of temperature changes from 1930 to 2023.
 
-- **Customizable Metrics Selection**: A feature allowing users to choose which metrics to display, such as temperature changes or carbon emissions. 
+-   **Customizable Metrics Selection**: A feature allowing users to choose which metrics to display, such as temperature changes or carbon emissions.
 
-- **Linked Graphs**: Display linked line or bar graphs below the choropleth map that update in real-time based on the selected country or region, showing detailed trends and data points. 
+-   **Linked Graphs**: Display linked line or bar graphs below the choropleth map that update in real-time based on the selected country or region, showing detailed trends and data points.
 
-- **Predictive Model**: By adding a predictive model, users can visualise what the discernable future may hold for global warming.
+-   **Predictive Model**: By adding a predictive model, users can visualise what the discernable future may hold for global warming.
 
 ## Choropleth Map Integration
 
-Additionally, a choropleth map will be introduced to further visualize the rate of change of temperature by country: 
+Additionally, a choropleth map will be introduced to further visualize the rate of change of temperature by country:
 
-- **Data Representation**: Each country will have a set colour, with gradients shifting to reflect temperature changes over time. 
+-   **Data Representation**: Each country will have a set colour, with gradients shifting to reflect temperature changes over time.
 
-- **Interactive Tooltip**: Display detailed information about each country when hovered over, such as exact temperature changes, historical data, and other relevant metrics.
+-   **Interactive Tooltip**: Display detailed information about each country when hovered over, such as exact temperature changes, historical data, and other relevant metrics.
 
 # Data Cleaning
 
@@ -197,7 +197,7 @@ unique_countries <- missing_data %>%
 
 # Print the unique countries
 # Display the tail of the initial data frame
-knitr::kable(unique_countries, caption = "List of Unique Countries with no Country Codes")
+knitr::kable(head(unique_countries), caption = "List of Unique Countries with no Country Codes")
 ```
 
 With reference with the country code from IBAN [(ISO 3166)](https://www.iban.com/country-codes), we will adjust the format of the country from IBAN data set to the kaggle dataset [(Climate Change: Earth Surface Temperature Data, 2017)](https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data/data)
@@ -251,8 +251,7 @@ unique_countries <- missing_data %>%
   distinct(Country, .keep_all = TRUE)
 
 # Print the unique countries
-# Display the tail of the initial data frame
-knitr::kable(unique_countries, caption = "List of Unique Countries with no Country Codes")
+knitr::kable(head(unique_countries), caption = "List of Unique Countries with no Country Codes")
 ```
 
 Then display the final cleaned data
