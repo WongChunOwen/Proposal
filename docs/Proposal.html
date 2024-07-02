@@ -3068,10 +3068,28 @@ vertical-align: -.125em;
 
 </head>
 
-<body class="fullcontent">
+<body>
 
 <div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
-
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#original-data-visualization-in-climate-change" id="toc-original-data-visualization-in-climate-change" class="nav-link active" data-scroll-target="#original-data-visualization-in-climate-change">Original Data Visualization in Climate Change</a></li>
+  <li><a href="#critical-assessment-of-the-original-visualization" id="toc-critical-assessment-of-the-original-visualization" class="nav-link" data-scroll-target="#critical-assessment-of-the-original-visualization">Critical Assessment of the Original Visualization</a></li>
+  <li><a href="#proposed-improvements" id="toc-proposed-improvements" class="nav-link" data-scroll-target="#proposed-improvements">Proposed Improvements</a>
+  <ul class="collapse">
+  <li><a href="#choropleth-map-integration" id="toc-choropleth-map-integration" class="nav-link" data-scroll-target="#choropleth-map-integration">Choropleth Map Integration</a></li>
+  </ul></li>
+  <li><a href="#data-cleaning" id="toc-data-cleaning" class="nav-link" data-scroll-target="#data-cleaning">Data Cleaning</a>
+  <ul class="collapse">
+  <li><a href="#joining-with-country-codes" id="toc-joining-with-country-codes" class="nav-link" data-scroll-target="#joining-with-country-codes">Joining with Country Codes</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
+</div>
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
@@ -3148,17 +3166,27 @@ Figure 1: Global Land and Ocean
 </section>
 <section id="proposed-improvements" class="level1">
 <h1>Proposed Improvements</h1>
-<p>The original visualisation will be enhanced with the following features: Dynamic Range Slider: A dynamic range slider will be added, allowing users to zoom into specific periods for detailed analysis or display a timelapse of temperature changes from 1930 to 2023. Customizable Metrics Selection: A feature allowing users to choose which metrics to display, such as temperature changes or carbon emissions. Linked Graphs: Display linked line or bar graphs below the choropleth map that update in real-time based on the selected country or region, showing detailed trends and data points. Predictive Model: By adding a predictive model, users can visualise what the discernable future may hold for global warming.</p>
+<p>The original visualisation will be enhanced with the following features:</p>
+<ul>
+<li><p><strong>Dynamic Range Slider</strong>: A dynamic range slider will be added, allowing users to zoom into specific periods for detailed analysis or display a timelapse of temperature changes from 1930 to 2023.</p></li>
+<li><p><strong>Customizable Metrics Selection</strong>: A feature allowing users to choose which metrics to display, such as temperature changes or carbon emissions.</p></li>
+<li><p><strong>Linked Graphs</strong>: Display linked line or bar graphs below the choropleth map that update in real-time based on the selected country or region, showing detailed trends and data points.</p></li>
+<li><p><strong>Predictive Model</strong>: By adding a predictive model, users can visualise what the discernable future may hold for global warming.</p></li>
+</ul>
 <section id="choropleth-map-integration" class="level2">
 <h2 class="anchored" data-anchor-id="choropleth-map-integration">Choropleth Map Integration</h2>
-<p>Additionally, a choropleth map will be introduced to further visualize the rate of change of temperature by country: Data Representation: Each country will have a set colour, with gradients shifting to reflect temperature changes over time. Interactive Tooltip: Display detailed information about each country when hovered over, such as exact temperature changes, historical data, and other relevant metrics.</p>
+<p>Additionally, a choropleth map will be introduced to further visualize the rate of change of temperature by country:</p>
+<ul>
+<li><p><strong>Data Representation</strong>: Each country will have a set colour, with gradients shifting to reflect temperature changes over time.</p></li>
+<li><p><strong>Interactive Tooltip</strong>: Display detailed information about each country when hovered over, such as exact temperature changes, historical data, and other relevant metrics.</p></li>
+</ul>
 </section>
 </section>
 <section id="data-cleaning" class="level1">
 <h1>Data Cleaning</h1>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the data</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/country_temp.csv&quot;</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;../data/country_temp.csv&quot;</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert the date column to Date format and extract the year and month</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>dt <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(data<span class="sc">$</span>dt, <span class="at">format =</span> <span class="st">&quot;%Y-%m-%d&quot;</span>)</span>
@@ -3366,7 +3394,7 @@ Figure 1: Global Land and Ocean
 <h2 class="anchored" data-anchor-id="joining-with-country-codes">Joining with Country Codes</h2>
 <p>We will now join the cleaned data with the country codes dataset to obtain the alpha-2 and alpha-3 codes for each country. This will allow us to create a choropleth map with the country codes as identifiers. Let us check for countries with missing data after the join using column Alpha2 and clean the data accordingly.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>country_codes <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/country_codes.csv&quot;</span>)</span>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>country_codes <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;../data/country_codes.csv&quot;</span>)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>joinedDT <span class="ot">&lt;-</span></span>
@@ -4429,10 +4457,10 @@ Figure 1: Global Land and Ocean
 <p>The data is now ready for visualization. The next step will be to create a plot that can effectively communicate the relationship between global temperature anomalies and anthropogenic activities over time, and additionally allow curious readers to explore the data even further using interactivity. We will use Plotly to create the plot and add interactivity.</p>
 <section id="references" class="level6">
 <h6 class="anchored" data-anchor-id="references">References</h6>
-<p>NCEI.Monitoring.Info@noaa.gov. (n.d.). Annual 2023 Global Climate Report | National Centers for Environmental Information (NCEI). <a href="https://www.ncei.noaa.gov/access/monitoring/monthly-report/global/202313">https://www.ncei.noaa.gov/access/monitoring/monthly-report/global/202313</a></p>
-<p>List of country codes by alpha-2, alpha-3 code (ISO 3166). (n.d.). <a href="https://www.iban.com/country-codes">https://www.iban.com/country-codes</a></p>
-<p>Change, N. G. C. (n.d.). Global Surface Temperature | NASA Global Climate Change. Climate Change: Vital Signs of the Planet.<a href="https://climate.nasa.gov/vital-signs/global-temperature/?intent=121">https://climate.nasa.gov/vital-signs/global-temperature/?intent=121</a></p>
-<p>Climate change: Earth surface temperature data. (2017, May 1). Kaggle. <a href="https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data/data">https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data/data</a></p>
+<p>NCEI.Monitoring.Info@noaa.gov. (n.d.). Annual 2023 Global Climate Report | National Centers for Environmental Information (NCEI). <a href="https://www.ncei.noaa.gov/access/monitoring/monthly-report/global/202313" class="uri">https://www.ncei.noaa.gov/access/monitoring/monthly-report/global/202313</a></p>
+<p>List of country codes by alpha-2, alpha-3 code (ISO 3166). (n.d.). <a href="https://www.iban.com/country-codes" class="uri">https://www.iban.com/country-codes</a></p>
+<p>Change, N. G. C. (n.d.). Global Surface Temperature | NASA Global Climate Change. Climate Change: Vital Signs of the Planet.<a href="https://climate.nasa.gov/vital-signs/global-temperature/?intent=121" class="uri">https://climate.nasa.gov/vital-signs/global-temperature/?intent=121</a></p>
+<p>Climate change: Earth surface temperature data. (2017, May 1). Kaggle. <a href="https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data/data" class="uri">https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data/data</a></p>
 </section>
 </section>
 
