@@ -16,6 +16,7 @@ For this document, the following packages are required:
 ```{r, message = FALSE, warning = FALSE}
 library(tidyverse)
 library(knitr)
+library(DT)
 library(zoo)
 ```
 
@@ -187,7 +188,8 @@ knitr::kable(unique_countries, caption = "List of Unique Countries with no Count
 countries_cleaned <- joinedDT[!is.na(joinedDT$Alpha3), ]
 
 # Check the cleaned data
-print(countries_cleaned)
+datatable(countries_cleaned, caption = "Cleaned Data Joined with Country Codes")
+
 ```
 
 # Conclusion
