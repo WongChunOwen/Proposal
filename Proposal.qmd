@@ -171,10 +171,32 @@ print(afghanistan_1839_median)
 ```
 
 ## Joining with Country Codes
+We will now join the cleaned data with the country codes dataset to obtain the alpha-2 and alpha-3 codes for each country. This will allow us to create a choropleth map with the country codes as identifiers. Let us check for countries with missing data after the join using column Alpha2 and clean the data accordingly.
 ```{r, message = FALSE, warning = FALSE}
 
 country_codes <- read_csv("data/country_codes.csv")
 
+
+joinedDT <-
+  full_join(
+    monthly_avg_all_countries_median,
+    country_codes,
+    by = c("Country")
+  )
+
+
+missing_data <- joinedDT %>% filter(is.na(joinedDT$`Alpha2`))
+
+unique_countries <- missing_data %>%
+  distinct(Country, .keep_all = TRUE)
+
+# Print the unique countries
+# Display the tail of the initial data frame
+knitr::kable(unique_countries, caption = "List of Unique Countries with no Country Codes")
+```
+
+With reference with the country code from IBAN [(ISO 3166)](https://www.iban.com/country-codes), we will adjust the format of the country from IBAN data set to the kaggle dataset [(Climate Change: Earth Surface Temperature Data, 2017)](https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data/data)
+```{r, message = FALSE, warning = FALSE}
 country_codes$Country <- gsub("\\s*\\([^)]*\\)|\\s*\\[[^]]*\\]|\\s+Islands", "", country_codes$Country)
 
 country_codes$Country <- gsub("Russian Federation", "Russia", country_codes$Country)
@@ -204,8 +226,9 @@ country_codes$Country <- gsub(" and ", " And ", country_codes$Country)
 
 
 monthly_avg_all_countries_median$Country <- gsub("\\s*\\([^)]*\\)|\\s*\\[[^]]*\\]|\\s+Islands", "",monthly_avg_all_countries_median$Country)
-
-
+```
+Ensure that there are no more country missing from IBAN [(ISO 3166)](https://www.iban.com/country-codes)
+```{r, message = FALSE, warning = FALSE}
 joinedDT <-
   full_join(
     monthly_avg_all_countries_median,
@@ -222,11 +245,19 @@ unique_countries <- missing_data %>%
 # Print the unique countries
 # Display the tail of the initial data frame
 knitr::kable(unique_countries, caption = "List of Unique Countries with no Country Codes")
+```
+Then display the final cleaned data
+```{r, message = FALSE, warning = FALSE}
+innerjoinedDT <-
+  inner_join(
+    monthly_avg_all_countries_median,
+    country_codes,
+    by = c("Country")
+  )
 
-countries_cleaned <- joinedDT[!is.na(joinedDT$Alpha3), ]
 
 # Check the cleaned data
-knitr::kable(head(countries_cleaned), caption = "Cleaned Data Joined with Country Codes")
+knitr::kable(head(innerjoinedDT), caption = "Cleaned Data Joined with Country Codes")
 
 ```
 
@@ -236,8 +267,10 @@ The data is now ready for visualization. The next step will be to create a plot 
 
 ###### References
 
-[To improve on](https://www.ncei.noaa.gov/access/monitoring/monthly-report/global/202313)
+NCEI.Monitoring.Info@noaa.gov. (n.d.). Annual 2023 Global Climate Report | National Centers for Environmental Information (NCEI). [https://www.ncei.noaa.gov/access/monitoring/monthly-report/global/202313](https://www.ncei.noaa.gov/access/monitoring/monthly-report/global/202313)
 
-[Country Codes](https://www.iban.com/country-codes)
+List of country codes by alpha-2, alpha-3 code (ISO 3166). (n.d.). [https://www.iban.com/country-codes](https://www.iban.com/country-codes)
 
-[Ideas](https://climate.nasa.gov/vital-signs/global-temperature/?intent=121)
+Change, N. G. C. (n.d.). Global Surface Temperature | NASA Global Climate Change. Climate Change: Vital Signs of the Planet.[https://climate.nasa.gov/vital-signs/global-temperature/?intent=121](https://climate.nasa.gov/vital-signs/global-temperature/?intent=121)
+
+Climate change: Earth surface temperature data. (2017, May 1). Kaggle. [https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data/data](https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data/data)

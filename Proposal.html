@@ -3364,56 +3364,789 @@ Figure 1: Global Land and Ocean
 </div>
 <section id="joining-with-country-codes" class="level2">
 <h2 class="anchored" data-anchor-id="joining-with-country-codes">Joining with Country Codes</h2>
+<p>We will now join the cleaned data with the country codes dataset to obtain the alpha-2 and alpha-3 codes for each country. This will allow us to create a choropleth map with the country codes as identifiers. Let us check for countries with missing data after the join using column Alpha2 and clean the data accordingly.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>country_codes <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/country_codes.csv&quot;</span>)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;</span><span class="sc">\\</span><span class="st">s*</span><span class="sc">\\</span><span class="st">([^)]*</span><span class="sc">\\</span><span class="st">)|</span><span class="sc">\\</span><span class="st">s*</span><span class="sc">\\</span><span class="st">[[^]]*</span><span class="sc">\\</span><span class="st">]|</span><span class="sc">\\</span><span class="st">s+Islands&quot;</span>, <span class="st">&quot;&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Russian Federation&quot;</span>, <span class="st">&quot;Russia&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;United States of America&quot;</span>, <span class="st">&quot;United States&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;United Kingdom of Great Britain and Northern Ireland&quot;</span>, <span class="st">&quot;United Kingdom&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Viet Nam&quot;</span>, <span class="st">&quot;Vietnam&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Bonaire, Sint Eustatius and Saba&quot;</span>, <span class="st">&quot;Bonaire, Saint Eustatius And Saba&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Myanmar&quot;</span>, <span class="st">&quot;Burma&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Cabo Verde&quot;</span>, <span class="st">&quot;Cape Verde&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Czechia&quot;</span>, <span class="st">&quot;Czech Republic&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Côte d&#39;Ivoire&quot;</span>, <span class="st">&quot;Côte D&#39;Ivoire&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
-<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Micronesia&quot;</span>, <span class="st">&quot;Federated States Of Micronesia&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
-<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;French Southern Territories&quot;</span>, <span class="st">&quot;French Southern And Antarctic Lands&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
-<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Guinea-Bissau&quot;</span>, <span class="st">&quot;Guinea Bissau&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
-<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Heard Island and McDonald&quot;</span>, <span class="st">&quot;Heard Island And Mcdonald&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
-<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Isle of Man&quot;</span>, <span class="st">&quot;Isle Of Man&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
-<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Macao&quot;</span>, <span class="st">&quot;Macau&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
-<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Republic of North Macedonia&quot;</span>, <span class="st">&quot;Macedonia&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
-<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Palestine, State of&quot;</span>, <span class="st">&quot;Palestina&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
-<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Saint Vincent and The Grenadines&quot;</span>, <span class="st">&quot;Saint Vincent And The Grenadines&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
-<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;South Georgia And The South Sandwich&quot;</span>, <span class="st">&quot;South Georgia And The South Sandwich Isla&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
-<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Syrian Arab Republic&quot;</span>, <span class="st">&quot;Syria&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
-<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Tanzania, United Republic of&quot;</span>, <span class="st">&quot;Tanzania&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
-<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Timor-Leste&quot;</span>, <span class="st">&quot;Timor Leste&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
-<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot; and &quot;</span>, <span class="st">&quot; And &quot;</span>, country_codes<span class="sc">$</span>Country)</span>
-<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>monthly_avg_all_countries_median<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;</span><span class="sc">\\</span><span class="st">s*</span><span class="sc">\\</span><span class="st">([^)]*</span><span class="sc">\\</span><span class="st">)|</span><span class="sc">\\</span><span class="st">s*</span><span class="sc">\\</span><span class="st">[[^]]*</span><span class="sc">\\</span><span class="st">]|</span><span class="sc">\\</span><span class="st">s+Islands&quot;</span>, <span class="st">&quot;&quot;</span>,monthly_avg_all_countries_median<span class="sc">$</span>Country)</span>
-<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a>joinedDT <span class="ot">&lt;-</span></span>
-<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">full_join</span>(</span>
-<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a>    monthly_avg_all_countries_median,</span>
-<span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a>    country_codes,</span>
-<span id="cb17-38"><a href="#cb17-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;Country&quot;</span>)</span>
-<span id="cb17-39"><a href="#cb17-39" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb17-40"><a href="#cb17-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-41"><a href="#cb17-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-42"><a href="#cb17-42" aria-hidden="true" tabindex="-1"></a>missing_data <span class="ot">&lt;-</span> joinedDT <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">is.na</span>(joinedDT<span class="sc">$</span><span class="st">`</span><span class="at">Alpha2</span><span class="st">`</span>))</span>
-<span id="cb17-43"><a href="#cb17-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-44"><a href="#cb17-44" aria-hidden="true" tabindex="-1"></a>unique_countries <span class="ot">&lt;-</span> missing_data <span class="sc">%&gt;%</span></span>
-<span id="cb17-45"><a href="#cb17-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(Country, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb17-46"><a href="#cb17-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-47"><a href="#cb17-47" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the unique countries</span></span>
-<span id="cb17-48"><a href="#cb17-48" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the tail of the initial data frame</span></span>
-<span id="cb17-49"><a href="#cb17-49" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(unique_countries, <span class="at">caption =</span> <span class="st">&quot;List of Unique Countries with no Country Codes&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>joinedDT <span class="ot">&lt;-</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">full_join</span>(</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    monthly_avg_all_countries_median,</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    country_codes,</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;Country&quot;</span>)</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>missing_data <span class="ot">&lt;-</span> joinedDT <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">is.na</span>(joinedDT<span class="sc">$</span><span class="st">`</span><span class="at">Alpha2</span><span class="st">`</span>))</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>unique_countries <span class="ot">&lt;-</span> missing_data <span class="sc">%&gt;%</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(Country, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the unique countries</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the tail of the initial data frame</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(unique_countries, <span class="at">caption =</span> <span class="st">&quot;List of Unique Countries with no Country Codes&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<caption>List of Unique Countries with no Country Codes</caption>
+<colgroup>
+<col style="width: 48%">
+<col style="width: 5%">
+<col style="width: 6%">
+<col style="width: 13%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 9%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Country</th>
+<th style="text-align: right;">year</th>
+<th style="text-align: left;">month</th>
+<th style="text-align: right;">monthly_avg</th>
+<th style="text-align: left;">Alpha2</th>
+<th style="text-align: left;">Alpha3</th>
+<th style="text-align: right;">Numeric</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Africa</td>
+<td style="text-align: right;">1850</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">19.76</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Antigua And Barbuda</td>
+<td style="text-align: right;">1824</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">24.85</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Asia</td>
+<td style="text-align: right;">1816</td>
+<td style="text-align: left;">04</td>
+<td style="text-align: right;">6.98</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Bahamas</td>
+<td style="text-align: right;">1758</td>
+<td style="text-align: left;">03</td>
+<td style="text-align: right;">22.22</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Baker Island</td>
+<td style="text-align: right;">1825</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">25.58</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Bolivia</td>
+<td style="text-align: right;">1855</td>
+<td style="text-align: left;">05</td>
+<td style="text-align: right;">19.32</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Bonaire, Saint Eustatius And Saba</td>
+<td style="text-align: right;">1824</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">25.58</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Bosnia And Herzegovina</td>
+<td style="text-align: right;">1743</td>
+<td style="text-align: left;">11</td>
+<td style="text-align: right;">6.39</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">British Virgin Islands</td>
+<td style="text-align: right;">1824</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">24.79</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Burma</td>
+<td style="text-align: right;">1816</td>
+<td style="text-align: left;">03</td>
+<td style="text-align: right;">23.16</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Cape Verde</td>
+<td style="text-align: right;">1849</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">22.04</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Cayman Islands</td>
+<td style="text-align: right;">1823</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">24.01</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Central African Republic</td>
+<td style="text-align: right;">1856</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">24.48</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Comoros</td>
+<td style="text-align: right;">1787</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">28.11</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Congo</td>
+<td style="text-align: right;">1856</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">24.41</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Congo (Democratic Republic Of The)</td>
+<td style="text-align: right;">1850</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">22.55</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Czech Republic</td>
+<td style="text-align: right;">1743</td>
+<td style="text-align: left;">11</td>
+<td style="text-align: right;">4.17</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Côte D’Ivoire</td>
+<td style="text-align: right;">1849</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">25.77</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Denmark (Europe)</td>
+<td style="text-align: right;">1743</td>
+<td style="text-align: left;">11</td>
+<td style="text-align: right;">6.51</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Dominican Republic</td>
+<td style="text-align: right;">1824</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">24.06</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Europe</td>
+<td style="text-align: right;">1743</td>
+<td style="text-align: left;">11</td>
+<td style="text-align: right;">3.94</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Falkland Islands (Islas Malvinas)</td>
+<td style="text-align: right;">1860</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">9.13</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Faroe Islands</td>
+<td style="text-align: right;">1743</td>
+<td style="text-align: left;">11</td>
+<td style="text-align: right;">6.11</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Federated States Of Micronesia</td>
+<td style="text-align: right;">1894</td>
+<td style="text-align: left;">11</td>
+<td style="text-align: right;">26.17</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">France (Europe)</td>
+<td style="text-align: right;">1743</td>
+<td style="text-align: left;">11</td>
+<td style="text-align: right;">7.40</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">French Southern And Antarctic Lands</td>
+<td style="text-align: right;">1948</td>
+<td style="text-align: left;">02</td>
+<td style="text-align: right;">7.13</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Gambia</td>
+<td style="text-align: right;">1849</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">24.41</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Gaza Strip</td>
+<td style="text-align: right;">1808</td>
+<td style="text-align: left;">10</td>
+<td style="text-align: right;">21.31</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Guinea Bissau</td>
+<td style="text-align: right;">1849</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">24.70</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Heard Island And Mcdonald Islands</td>
+<td style="text-align: right;">1948</td>
+<td style="text-align: left;">02</td>
+<td style="text-align: right;">3.67</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Iran</td>
+<td style="text-align: right;">1837</td>
+<td style="text-align: left;">02</td>
+<td style="text-align: right;">6.96</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Isle Of Man</td>
+<td style="text-align: right;">1743</td>
+<td style="text-align: left;">11</td>
+<td style="text-align: right;">9.62</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Kingman Reef</td>
+<td style="text-align: right;">1883</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">25.65</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Laos</td>
+<td style="text-align: right;">1816</td>
+<td style="text-align: left;">03</td>
+<td style="text-align: right;">21.65</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Macau</td>
+<td style="text-align: right;">1840</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">15.24</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Macedonia</td>
+<td style="text-align: right;">1743</td>
+<td style="text-align: left;">11</td>
+<td style="text-align: right;">5.43</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Moldova</td>
+<td style="text-align: right;">1743</td>
+<td style="text-align: left;">11</td>
+<td style="text-align: right;">3.42</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Namibia</td>
+<td style="text-align: right;">1857</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">23.05</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NAM</td>
+<td style="text-align: right;">516</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Netherlands</td>
+<td style="text-align: right;">1743</td>
+<td style="text-align: left;">11</td>
+<td style="text-align: right;">8.01</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Netherlands (Europe)</td>
+<td style="text-align: right;">1743</td>
+<td style="text-align: left;">11</td>
+<td style="text-align: right;">7.61</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Niger</td>
+<td style="text-align: right;">1819</td>
+<td style="text-align: left;">05</td>
+<td style="text-align: right;">31.92</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">North America</td>
+<td style="text-align: right;">1768</td>
+<td style="text-align: left;">09</td>
+<td style="text-align: right;">9.76</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">North Korea</td>
+<td style="text-align: right;">1839</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">-10.42</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Northern Mariana Islands</td>
+<td style="text-align: right;">1903</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">25.79</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Oceania</td>
+<td style="text-align: right;">1852</td>
+<td style="text-align: left;">07</td>
+<td style="text-align: right;">14.44</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Palestina</td>
+<td style="text-align: right;">1843</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">21.81</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Palmyra Atoll</td>
+<td style="text-align: right;">1883</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">25.66</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Philippines</td>
+<td style="text-align: right;">1853</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">24.22</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Reunion</td>
+<td style="text-align: right;">1787</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">26.11</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Russia</td>
+<td style="text-align: right;">1812</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">-27.11</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Saint Kitts And Nevis</td>
+<td style="text-align: right;">1824</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">24.41</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Saint Martin</td>
+<td style="text-align: right;">1824</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">25.01</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Saint Pierre And Miquelon</td>
+<td style="text-align: right;">1743</td>
+<td style="text-align: left;">11</td>
+<td style="text-align: right;">1.16</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Saint Vincent And The Grenadines</td>
+<td style="text-align: right;">1824</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">25.55</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Sao Tome And Principe</td>
+<td style="text-align: right;">1856</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">26.13</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sint Maarten</td>
+<td style="text-align: right;">1824</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">25.01</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">South America</td>
+<td style="text-align: right;">1851</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">23.64</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">South Georgia And The South Sandwich Isla</td>
+<td style="text-align: right;">1874</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: right;">2.94</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">South Korea</td>
+<td style="text-align: right;">1841</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">-3.68</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sudan</td>
+<td style="text-align: right;">1856</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">22.13</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Svalbard And Jan Mayen</td>
+<td style="text-align: right;">1761</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">-16.41</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Swaziland</td>
+<td style="text-align: right;">1857</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">21.63</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Syria</td>
+<td style="text-align: right;">1808</td>
+<td style="text-align: left;">10</td>
+<td style="text-align: right;">19.47</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Taiwan</td>
+<td style="text-align: right;">1841</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">14.97</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Tanzania</td>
+<td style="text-align: right;">1850</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">22.05</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Timor Leste</td>
+<td style="text-align: right;">1878</td>
+<td style="text-align: left;">03</td>
+<td style="text-align: right;">27.60</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Trinidad And Tobago</td>
+<td style="text-align: right;">1824</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">24.99</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Turks And Caicas Islands</td>
+<td style="text-align: right;">1823</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">23.82</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">United Arab Emirates</td>
+<td style="text-align: right;">1843</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">19.11</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">United Kingdom</td>
+<td style="text-align: right;">1743</td>
+<td style="text-align: left;">11</td>
+<td style="text-align: right;">7.09</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">United Kingdom (Europe)</td>
+<td style="text-align: right;">1743</td>
+<td style="text-align: left;">11</td>
+<td style="text-align: right;">7.18</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">United States</td>
+<td style="text-align: right;">1768</td>
+<td style="text-align: left;">09</td>
+<td style="text-align: right;">15.42</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Venezuela</td>
+<td style="text-align: right;">1824</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">24.61</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Vietnam</td>
+<td style="text-align: right;">1825</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">19.54</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Virgin Islands</td>
+<td style="text-align: right;">1824</td>
+<td style="text-align: left;">01</td>
+<td style="text-align: right;">24.79</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Åland</td>
+<td style="text-align: right;">1743</td>
+<td style="text-align: left;">11</td>
+<td style="text-align: right;">4.38</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>With reference with the country code from IBAN <a href="https://www.iban.com/country-codes">(ISO 3166)</a>, we will adjust the format of the country from IBAN data set to the kaggle dataset <a href="https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data/data">(Climate Change: Earth Surface Temperature Data, 2017)</a></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;</span><span class="sc">\\</span><span class="st">s*</span><span class="sc">\\</span><span class="st">([^)]*</span><span class="sc">\\</span><span class="st">)|</span><span class="sc">\\</span><span class="st">s*</span><span class="sc">\\</span><span class="st">[[^]]*</span><span class="sc">\\</span><span class="st">]|</span><span class="sc">\\</span><span class="st">s+Islands&quot;</span>, <span class="st">&quot;&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Russian Federation&quot;</span>, <span class="st">&quot;Russia&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;United States of America&quot;</span>, <span class="st">&quot;United States&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;United Kingdom of Great Britain and Northern Ireland&quot;</span>, <span class="st">&quot;United Kingdom&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Viet Nam&quot;</span>, <span class="st">&quot;Vietnam&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Bonaire, Sint Eustatius and Saba&quot;</span>, <span class="st">&quot;Bonaire, Saint Eustatius And Saba&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Myanmar&quot;</span>, <span class="st">&quot;Burma&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Cabo Verde&quot;</span>, <span class="st">&quot;Cape Verde&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Czechia&quot;</span>, <span class="st">&quot;Czech Republic&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Côte d&#39;Ivoire&quot;</span>, <span class="st">&quot;Côte D&#39;Ivoire&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Micronesia&quot;</span>, <span class="st">&quot;Federated States Of Micronesia&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;French Southern Territories&quot;</span>, <span class="st">&quot;French Southern And Antarctic Lands&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Guinea-Bissau&quot;</span>, <span class="st">&quot;Guinea Bissau&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Heard Island and McDonald&quot;</span>, <span class="st">&quot;Heard Island And Mcdonald&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Isle of Man&quot;</span>, <span class="st">&quot;Isle Of Man&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Macao&quot;</span>, <span class="st">&quot;Macau&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Republic of North Macedonia&quot;</span>, <span class="st">&quot;Macedonia&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Palestine, State of&quot;</span>, <span class="st">&quot;Palestina&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Saint Vincent and The Grenadines&quot;</span>, <span class="st">&quot;Saint Vincent And The Grenadines&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;South Georgia And The South Sandwich&quot;</span>, <span class="st">&quot;South Georgia And The South Sandwich Isla&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Syrian Arab Republic&quot;</span>, <span class="st">&quot;Syria&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Tanzania, United Republic of&quot;</span>, <span class="st">&quot;Tanzania&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Timor-Leste&quot;</span>, <span class="st">&quot;Timor Leste&quot;</span>, country_codes<span class="sc">$</span>Country)</span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>country_codes<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot; and &quot;</span>, <span class="st">&quot; And &quot;</span>, country_codes<span class="sc">$</span>Country)</span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a>monthly_avg_all_countries_median<span class="sc">$</span>Country <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;</span><span class="sc">\\</span><span class="st">s*</span><span class="sc">\\</span><span class="st">([^)]*</span><span class="sc">\\</span><span class="st">)|</span><span class="sc">\\</span><span class="st">s*</span><span class="sc">\\</span><span class="st">[[^]]*</span><span class="sc">\\</span><span class="st">]|</span><span class="sc">\\</span><span class="st">s+Islands&quot;</span>, <span class="st">&quot;&quot;</span>,monthly_avg_all_countries_median<span class="sc">$</span>Country)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ensure that there are no more country missing from IBAN <a href="https://www.iban.com/country-codes">(ISO 3166)</a></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>joinedDT <span class="ot">&lt;-</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">full_join</span>(</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    monthly_avg_all_countries_median,</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    country_codes,</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;Country&quot;</span>)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>missing_data <span class="ot">&lt;-</span> joinedDT <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">is.na</span>(joinedDT<span class="sc">$</span><span class="st">`</span><span class="at">Alpha2</span><span class="st">`</span>))</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>unique_countries <span class="ot">&lt;-</span> missing_data <span class="sc">%&gt;%</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(Country, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the unique countries</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the tail of the initial data frame</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(unique_countries, <span class="at">caption =</span> <span class="st">&quot;List of Unique Countries with no Country Codes&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="table table-sm table-striped small">
 <caption>List of Unique Countries with no Country Codes</caption>
@@ -3603,10 +4336,19 @@ Figure 1: Global Land and Ocean
 </tbody>
 </table>
 </div>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>countries_cleaned <span class="ot">&lt;-</span> joinedDT[<span class="sc">!</span><span class="fu">is.na</span>(joinedDT<span class="sc">$</span>Alpha3), ]</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the cleaned data</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(countries_cleaned), <span class="at">caption =</span> <span class="st">&quot;Cleaned Data Joined with Country Codes&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then display the final cleaned data</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>innerjoinedDT <span class="ot">&lt;-</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    monthly_avg_all_countries_median,</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    country_codes,</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;Country&quot;</span>)</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the cleaned data</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(innerjoinedDT), <span class="at">caption =</span> <span class="st">&quot;Cleaned Data Joined with Country Codes&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="table table-sm table-striped small">
 <caption>Cleaned Data Joined with Country Codes</caption>
@@ -3687,9 +4429,10 @@ Figure 1: Global Land and Ocean
 <p>The data is now ready for visualization. The next step will be to create a plot that can effectively communicate the relationship between global temperature anomalies and anthropogenic activities over time, and additionally allow curious readers to explore the data even further using interactivity. We will use Plotly to create the plot and add interactivity.</p>
 <section id="references" class="level6">
 <h6 class="anchored" data-anchor-id="references">References</h6>
-<p><a href="https://www.ncei.noaa.gov/access/monitoring/monthly-report/global/202313">To improve on</a></p>
-<p><a href="https://www.iban.com/country-codes">Country Codes</a></p>
-<p><a href="https://climate.nasa.gov/vital-signs/global-temperature/?intent=121">Ideas</a></p>
+<p>NCEI.Monitoring.Info@noaa.gov. (n.d.). Annual 2023 Global Climate Report | National Centers for Environmental Information (NCEI). <a href="https://www.ncei.noaa.gov/access/monitoring/monthly-report/global/202313">https://www.ncei.noaa.gov/access/monitoring/monthly-report/global/202313</a></p>
+<p>List of country codes by alpha-2, alpha-3 code (ISO 3166). (n.d.). <a href="https://www.iban.com/country-codes">https://www.iban.com/country-codes</a></p>
+<p>Change, N. G. C. (n.d.). Global Surface Temperature | NASA Global Climate Change. Climate Change: Vital Signs of the Planet.<a href="https://climate.nasa.gov/vital-signs/global-temperature/?intent=121">https://climate.nasa.gov/vital-signs/global-temperature/?intent=121</a></p>
+<p>Climate change: Earth surface temperature data. (2017, May 1). Kaggle. <a href="https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data/data">https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data/data</a></p>
 </section>
 </section>
 
