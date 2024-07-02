@@ -27,7 +27,7 @@ The ongoing dialogue surrounding climate change has increasingly focused on the 
 
 The visualization spans over a century of data, capturing periods of significant climatic shifts. Despite its clarity in depicting long-term trends, the inclusion of interactive features (as illustrated in @fig-GlobalLandOcean) enhances user engagement with the data. However, there is potential for further refinement. Incorporating more dynamic elements such as temporal sliders, geospatial overlays, and chloropleth map integration could offer a more nuanced understanding of how specific policies and global events impact climate change on a regional and global scale.
 
-![Global Land and Ocean](../imgs/global_and_sea.png){#fig-GlobalLandOcean}
+![Global temperature deviation from the 20th century average temperature of 13.9°C (57.0°F) from 1850 to 2023.](../imgs/global_and_sea.png){#fig-GlobalLandOcean}
 
 # Critical Assessment of the Original Visualization
 
