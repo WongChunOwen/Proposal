@@ -27,7 +27,7 @@ The ongoing dialogue surrounding climate change has increasingly focused on the 
 
 The visualization spans over a century of data, capturing periods of significant climatic shifts. Despite its clarity in depicting long-term trends, the inclusion of interactive features (as illustrated in @fig-GlobalLandOcean) enhances user engagement with the data. However, there is potential for further refinement. Incorporating more dynamic elements such as temporal sliders, geospatial overlays, and chloropleth map integration could offer a more nuanced understanding of how specific policies and global events impact climate change on a regional and global scale.
 
-![Global temperature deviation from the 20th century average temperature of 13.9°C (57.0°F) from 1850 to 2023.](../imgs/global_and_sea.png){#fig-GlobalLandOcean}
+![Global Land and Ocean](../imgs/global_and_sea.png){#fig-GlobalLandOcean}
 
 # Critical Assessment of the Original Visualization
 
@@ -76,7 +76,7 @@ Additionally, a choropleth map will be introduced to further visualize the rate 
 -   **Interactive Tooltip**: Display detailed information about each country when hovered over, such as exact temperature changes, historical data, and other relevant metrics.
 
 # Data Cleaning
-
+As for data cleaning, we converted the date column to Date format, and extracted the year and month. The data was grouped by country, year, and month to calculate the average temperature, rounded to two decimal places. An initial check for NaN values was performed, displaying and removing rows related to "Antarctica" due to complete NaN values. Missing values were filled using a median calculation within a 5-year window for the same month. In addition, to smooth any remaining smaller gap NaN values and ensure continuity, a function from the zoo library is used. By applying linear interpolation and forward/backward filling, it ensures continuous and complete temperature records. The final values were then rounded to two decimal places. Thereafter, a final check for NaN values was conducted, and the imputed temperature data for Afghanistan in 1839 was filtered and displayed to validate the imputation process.
 ```{r, message = FALSE, warning = FALSE}
 
 # Load the data
@@ -93,14 +93,7 @@ monthly_avg_all_countries_initial <- data |>
   summarize(monthly_avg = round(mean(AverageTemperature, na.rm = TRUE), 2))
 
 # Display the tail of the initial data frame
-knitr::kable(tail(monthly_avg_all_countries_initial), caption = "Tail of Monthly Average Temperatures by Country", digits = 2)
-
-# Filter the data for Afghanistan in the year 1839
-afghanistan_1839_initial <- monthly_avg_all_countries_initial |>
-  filter(Country == "Afghanistan" & year == 1839)
-
-# Display the filtered data
-print(afghanistan_1839_initial)
+knitr::kable(head(monthly_avg_all_countries_initial), caption = "Head of Monthly Average Temperatures by Country", digits = 2)
 
 # Check for NA and NaN values in the monthly_avg_all_countries_initial dataframe
 nan_check_initial <- sapply(monthly_avg_all_countries_initial, function(x) sum(is.na(x)))
@@ -108,7 +101,7 @@ print(nan_check_initial)
 
 # Display rows with NA and NaN values
 rows_with_nan_initial <- monthly_avg_all_countries_initial[apply(monthly_avg_all_countries_initial, 1, function(row) any(is.na(row))), ]
-print(rows_with_nan_initial)
+knitr::kable(head(rows_with_nan_initial), caption = "Rows with NA and NaN Values")
 
 # Remove rows with "Antarctica" from the dataset as the entire dataset for it is NaN
 monthly_avg_all_countries_initial <- monthly_avg_all_countries_initial |> filter(Country != "Antarctica")
@@ -116,21 +109,7 @@ monthly_avg_all_countries_initial <- monthly_avg_all_countries_initial |> filter
 # Verify that "Antarctica" rows are removed
 print(monthly_avg_all_countries_initial |> filter(Country == "Antarctica"))
 
-# Function to fill NaN values using zoo library
-# It is used for filling missing values through linear interpolation and forward/backward filling, ensuring continuous and complete temperature records.
-fill_nan <- function(df) {
-  df |>
-    group_by(Country) |>
-    mutate(monthly_avg = na.approx(monthly_avg, na.rm = FALSE, rule = 2)) |>
-    mutate(monthly_avg = ifelse(is.na(monthly_avg), zoo::na.locf(monthly_avg, na.rm = FALSE), monthly_avg)) |>
-    mutate(monthly_avg = ifelse(is.na(monthly_avg), zoo::na.locf(monthly_avg, fromLast = TRUE, na.rm = FALSE), monthly_avg)) |>
-    ungroup()
-}
-
-# Apply fill_nan function
-monthly_avg_all_countries_filled <- fill_nan(monthly_avg_all_countries_initial)
-
-# Function to fill remaining NaN values with median of 5-year window for the same month
+# Function to fill NaN values with median of 5-year window for the same month
 fill_with_window_month_median <- function(df) {
   df |>
     group_by(Country, month) |>
@@ -150,27 +129,40 @@ fill_with_window_month_median <- function(df) {
 }
 
 # Apply window month median filling function
-monthly_avg_all_countries_median <- fill_with_window_month_median(monthly_avg_all_countries_filled)
+monthly_avg_all_countries_median <- fill_with_window_month_median(monthly_avg_all_countries_initial)
+
+# Function to fill NaN values using zoo library
+# It is used for filling missing values through linear interpolation and forward/backward filling, ensuring continuous and complete temperature records.
+fill_nan <- function(df) {
+  df |>
+    group_by(Country) |>
+    mutate(monthly_avg = na.approx(monthly_avg, na.rm = FALSE, rule = 2)) |>
+    mutate(monthly_avg = ifelse(is.na(monthly_avg), zoo::na.locf(monthly_avg, na.rm = FALSE), monthly_avg)) |>
+    mutate(monthly_avg = ifelse(is.na(monthly_avg), zoo::na.locf(monthly_avg, fromLast = TRUE, na.rm = FALSE), monthly_avg)) |>
+    ungroup()
+}
+
+# Apply fill_nan function
+monthly_avg_all_countries_filled <- fill_nan(monthly_avg_all_countries_median)
 
 # Round the final dataframe to 2 decimal places
-monthly_avg_all_countries_median <- monthly_avg_all_countries_median |>
+monthly_avg_all_countries_filled <- monthly_avg_all_countries_filled |>
   mutate(monthly_avg = round(monthly_avg, 2))
 
 # Checking for remaining NaN values in the median imputed dataset
-nan_check_median <- sapply(monthly_avg_all_countries_median, function(x) sum(is.na(x)))
-print(nan_check_median)
+nan_check_filled <- sapply(monthly_avg_all_countries_filled, function(x) sum(is.na(x)))
+print(nan_check_filled)
 
 # Display rows with NaN values in the median imputed dataset
-rows_with_nan_median <- monthly_avg_all_countries_median[apply(monthly_avg_all_countries_median, 1, function(row) any(is.na(row))), ]
-print(rows_with_nan_median)
+rows_with_nan_final <- monthly_avg_all_countries_filled[apply(monthly_avg_all_countries_filled, 1, function(row) any(is.na(row))), ]
+print(rows_with_nan_final)
 
-# Filter the data for Afghanistan in the year 1839
-afghanistan_1839_median <- monthly_avg_all_countries_median |>
+# Filter the data for Afghanistan in the year 1839 to check the imputed values
+afghanistan <- monthly_avg_all_countries_filled |>
   filter(Country == "Afghanistan" & year == 1839)
 
-# Display the filtered data
-print(afghanistan_1839_median)
-
+# Display the filtered data for Afghanistan in 1839
+knitr::kable(head(afghanistan), caption = "Filtered Data for Afghanistan in 1839", digits = 2)
 ```
 
 ## Joining with Country Codes
@@ -184,7 +176,7 @@ country_codes <- read_csv("../data/country_codes.csv")
 
 joinedDT <-
   full_join(
-    monthly_avg_all_countries_median,
+    monthly_avg_all_countries_filled,
     country_codes,
     by = c("Country")
   )
@@ -197,7 +189,7 @@ unique_countries <- missing_data %>%
 
 # Print the unique countries
 # Display the tail of the initial data frame
-knitr::kable(head(unique_countries), caption = "List of Unique Countries with no Country Codes")
+knitr::kable(unique_countries, caption = "List of Unique Countries with no Country Codes")
 ```
 
 With reference with the country code from IBAN [(ISO 3166)](https://www.iban.com/country-codes), we will adjust the format of the country from IBAN data set to the kaggle dataset [(Climate Change: Earth Surface Temperature Data, 2017)](https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data/data)
@@ -231,7 +223,7 @@ country_codes$Country <- gsub("Timor-Leste", "Timor Leste", country_codes$Countr
 country_codes$Country <- gsub(" and ", " And ", country_codes$Country)
 
 
-monthly_avg_all_countries_median$Country <- gsub("\\s*\\([^)]*\\)|\\s*\\[[^]]*\\]|\\s+Islands", "",monthly_avg_all_countries_median$Country)
+monthly_avg_all_countries_filled$Country <- gsub("\\s*\\([^)]*\\)|\\s*\\[[^]]*\\]|\\s+Islands", "",monthly_avg_all_countries_filled$Country)
 ```
 
 Ensure that there are no more country missing from IBAN [(ISO 3166)](https://www.iban.com/country-codes)
@@ -239,7 +231,7 @@ Ensure that there are no more country missing from IBAN [(ISO 3166)](https://www
 ```{r, message = FALSE, warning = FALSE}
 joinedDT <-
   full_join(
-    monthly_avg_all_countries_median,
+    monthly_avg_all_countries_filled,
     country_codes,
     by = c("Country")
   )
@@ -251,7 +243,8 @@ unique_countries <- missing_data %>%
   distinct(Country, .keep_all = TRUE)
 
 # Print the unique countries
-knitr::kable(head(unique_countries), caption = "List of Unique Countries with no Country Codes")
+# Display the tail of the initial data frame
+knitr::kable(unique_countries, caption = "List of Unique Countries with no Country Codes")
 ```
 
 Then display the final cleaned data
@@ -259,7 +252,7 @@ Then display the final cleaned data
 ```{r, message = FALSE, warning = FALSE}
 innerjoinedDT <-
   inner_join(
-    monthly_avg_all_countries_median,
+    monthly_avg_all_countries_filled,
     country_codes,
     by = c("Country")
   )
@@ -276,7 +269,6 @@ The data is now ready for visualization. The next step will be to create a plot 
 
 ###### References
 
-::: {style="font-size: 12px"}
 NCEI.Monitoring.Info\@noaa.gov. (n.d.). Annual 2023 Global Climate Report \| National Centers for Environmental Information (NCEI). <https://www.ncei.noaa.gov/access/monitoring/monthly-report/global/202313>
 
 List of country codes by alpha-2, alpha-3 code (ISO 3166). (n.d.). <https://www.iban.com/country-codes>
@@ -284,4 +276,3 @@ List of country codes by alpha-2, alpha-3 code (ISO 3166). (n.d.). <https://www.
 Change, N. G. C. (n.d.). Global Surface Temperature \| NASA Global Climate Change. Climate Change: Vital Signs of the Planet.<https://climate.nasa.gov/vital-signs/global-temperature/?intent=121>
 
 Climate change: Earth surface temperature data. (2017, May 1). Kaggle. <https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data/data>
-:::
