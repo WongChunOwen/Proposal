@@ -38,7 +38,7 @@ The visualization spans over a century of data, capturing periods of significant
 ## Joining
 
 ```{r}
-code_df <- read.csv("country_codes.csv")
+code_df <- read.csv("data/country_codes.csv")
 ```
 
 ## Convert Year
