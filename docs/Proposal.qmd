@@ -76,7 +76,9 @@ Additionally, a choropleth map will be introduced to further visualize the rate 
 -   **Interactive Tooltip**: Display detailed information about each country when hovered over, such as exact temperature changes, historical data, and other relevant metrics.
 
 # Data Cleaning
-As for data cleaning, we converted the date column to Date format, and extracted the year and month. The data was grouped by country, year, and month to calculate the average temperature, rounded to two decimal places. An initial check for NaN values was performed, displaying and removing rows related to "Antarctica" due to complete NaN values. Missing values were filled using a median calculation within a 5-year window for the same month. In addition, to smooth any remaining smaller gap NaN values and ensure continuity, a function from the zoo library is used. By applying linear interpolation and forward/backward filling, it ensures continuous and complete temperature records. The final values were then rounded to two decimal places. Thereafter, a final check for NaN values was conducted, and the imputed temperature data for Afghanistan in 1839 was filtered and displayed to validate the imputation process.
+
+We converted the date column to Date format and extracted the year and month. The data was then grouped by country, year, and month to calculate the average temperature, rounded to two decimal places. An initial check for NaN values was performed, displaying and removing rows related to "Antarctica" due to complete NaN values. Missing values were filled using linear interpolation and forward/backward filling. Additionally, a median calculation within a 5-year window for the same month was applied to ensure continuous and complete temperature records. The final values were then rounded to two decimal places. A final check for NaN values was conducted, and the imputed temperature data for Afghanistan in 1839 was filtered and displayed to validate the imputation process.
+
 ```{r, message = FALSE, warning = FALSE}
 
 # Load the data
