@@ -19,6 +19,7 @@ For this document, the following packages are required:
 library(tidyverse)
 library(knitr)
 library(zoo)
+library(dplyr)
 ```
 
 # Original Data Visualization in Climate Change
@@ -76,8 +77,9 @@ Additionally, a choropleth map will be introduced to further visualize the rate 
 -   **Interactive Tooltip**: Display detailed information about each country when hovered over, such as exact temperature changes, historical data, and other relevant metrics.
 
 # Data Cleaning
+In this portion, the dplyr and zoo libraries were used. We converted the date column to Date format and extracted the year and month. The data was then grouped by country, year, and month to calculate the average temperature, rounded to two decimal places. An initial check for NaN values was performed, displaying rows with missing values. Rows related to "Antarctica" were removed due to complete NaN values. The NaN values were filled using linear interpolation and forward/backward filling using the zoo library. The final values were then rounded to two decimal places. A final check for NaN values was conducted, and the imputed temperature data for Afghanistan in 1839 was filtered, as the entire was filled with NaN values, and displayed to validate the imputation process.
 
-We converted the date column to Date format and extracted the year and month. The data was then grouped by country, year, and month to calculate the average temperature, rounded to two decimal places. An initial check for NaN values was performed, displaying and removing rows related to "Antarctica" due to complete NaN values. Missing values were filled using linear interpolation and forward/backward filling. Additionally, a median calculation within a 5-year window for the same month was applied to ensure continuous and complete temperature records. The final values were then rounded to two decimal places. A final check for NaN values was conducted, and the imputed temperature data for Afghanistan in 1839 was filtered and displayed to validate the imputation process.
+After the entire process, an example of the country afganistan was used to show the missing data in 1839, which was then filled using interpolation, which the data could be referenced using the year 1843, which had no missing values.
 
 ```{r, message = FALSE, warning = FALSE}
 
@@ -85,32 +87,36 @@ We converted the date column to Date format and extracted the year and month. Th
 data <- read_csv("../data/country_temp.csv")
 
 # Convert the date column to Date format and extract the year and month
-data$dt <- as.Date(data$dt, format = "%Y-%m-%d")
-data$year <- as.numeric(format(data$dt, "%Y"))
-data$month <- format(data$dt, "%m")
+data <- data |>
+  mutate(dt = as.Date(dt, format = "%Y-%m-%d"),
+         year = as.numeric(format(dt, "%Y")),
+         month = format(dt, "%m"))
 
 # Group by country, year, and month, then calculate the average temperatures rounded to 2 decimal points
 monthly_avg_all_countries_initial <- data |>
   group_by(Country, year, month) |>
-  summarize(monthly_avg = round(mean(AverageTemperature, na.rm = TRUE), 2))
+  summarize(monthly_avg = round(mean(AverageTemperature, na.rm = TRUE), 2), .groups = 'drop')
 
-# Display the tail of the initial data frame
-knitr::kable(tail(monthly_avg_all_countries_initial), caption = "Tail of Monthly Average Temperatures by Country", digits = 2)
-
-# Filter the data for Afghanistan in the year 1839
-afghanistan_1839_initial <- monthly_avg_all_countries_initial |>
-  filter(Country == "Afghanistan" & year == 1839)
-
-# Display the filtered data
-print(afghanistan_1839_initial)
+# Display the head of the initial data frame
+knitr::kable(head(monthly_avg_all_countries_initial), caption = "Head of Monthly Average Temperatures by Country", digits = 2)
 
 # Check for NA and NaN values in the monthly_avg_all_countries_initial dataframe
-nan_check_initial <- sapply(monthly_avg_all_countries_initial, function(x) sum(is.na(x)))
-print(nan_check_initial)
+nan_check_initial <- monthly_avg_all_countries_initial |> summarize_all(~sum(is.na(.)))
+knitr::kable(nan_check_initial)
 
 # Display rows with NA and NaN values
-rows_with_nan_initial <- monthly_avg_all_countries_initial[apply(monthly_avg_all_countries_initial, 1, function(row) any(is.na(row))), ]
-print(rows_with_nan_initial)
+rows_with_nan_initial <- monthly_avg_all_countries_initial |> filter(is.na(monthly_avg))
+knitr::kable(head(rows_with_nan_initial, 10), caption = "Rows with Na & NaN values")
+
+# Filtered data for Afghanistan in the year 1839 to show missing NaN values for the entire year
+afghanistan_1839 <- monthly_avg_all_countries_initial |>
+  filter(Country == "Afghanistan" & year == 1839)
+knitr::kable(afghanistan_1839, caption = "Missing data for Afghanistan in 1839", digits = 2)
+
+# Filtered data for Afghanistan in the year 1843 to show no missing values for referencing the effect of using interpolation later on.
+afghanistan_1840 <- monthly_avg_all_countries_initial |>
+  filter(Country == "Afghanistan" & year == 1843)
+knitr::kable(afghanistan_1840, caption = "No missing data for Afghanistan in 1843", digits = 2)
 
 # Remove rows with "Antarctica" from the dataset as the entire dataset for it is NaN
 monthly_avg_all_countries_initial <- monthly_avg_all_countries_initial |> filter(Country != "Antarctica")
@@ -119,59 +125,40 @@ monthly_avg_all_countries_initial <- monthly_avg_all_countries_initial |> filter
 print(monthly_avg_all_countries_initial |> filter(Country == "Antarctica"))
 
 # Function to fill NaN values using zoo library
-# It is used for filling missing values through linear interpolation and forward/backward filling, ensuring continuous and complete temperature records.
 fill_nan <- function(df) {
   df |>
-    group_by(Country) |>
+    group_by(Country, month) |>
+    # fills missing values by estimating values between two known points
+    # When there are non-missing values both before and after a missing value, linear interpolation will successfully fill the missing value.
     mutate(monthly_avg = na.approx(monthly_avg, na.rm = FALSE, rule = 2)) |>
-    mutate(monthly_avg = ifelse(is.na(monthly_avg), zoo::na.locf(monthly_avg, na.rm = FALSE), monthly_avg)) |>
+    # Takes the next observed non-missing value and uses it to fill the current missing value.
+    # Some country might be missing the first value of the year, so we use the next observed non-missing value to fill the current missing value.
     mutate(monthly_avg = ifelse(is.na(monthly_avg), zoo::na.locf(monthly_avg, fromLast = TRUE, na.rm = FALSE), monthly_avg)) |>
+    # Takes the last observed non-missing value and uses it to fill the current missing value.
+    mutate(monthly_avg = ifelse(is.na(monthly_avg), zoo::na.locf(monthly_avg, na.rm = FALSE), monthly_avg)) |>
     ungroup()
 }
 
 # Apply fill_nan function
-monthly_avg_all_countries_filled <- fill_nan(monthly_avg_all_countries_initial)
-
-# Function to fill remaining NaN values with median of 5-year window for the same month
-fill_with_window_month_median <- function(df) {
-  df |>
-    group_by(Country, month) |>
-    mutate(monthly_avg = ifelse(is.na(monthly_avg), 
-                                sapply(seq_along(monthly_avg), function(i) {
-                                  if (is.na(monthly_avg[i])) {
-                                    start_year <- year[i] - 5
-                                    end_year <- year[i] + 5
-                                    window_median <- median(df$monthly_avg[df$Country == Country[i] & df$month == month[i] & df$year >= start_year &df$year <= end_year & !is.na(df$monthly_avg)], na.rm = TRUE)
-                                    return(window_median)
-                                  } else {
-                                    return(monthly_avg[i])
-                                  }
-                                }), 
-                                monthly_avg)) |>
-    ungroup()
-}
-
-# Apply window month median filling function
-monthly_avg_all_countries_median <- fill_with_window_month_median(monthly_avg_all_countries_filled)
+monthly_avg_all_countries_final <- monthly_avg_all_countries_initial |> fill_nan()
 
 # Round the final dataframe to 2 decimal places
-monthly_avg_all_countries_median <- monthly_avg_all_countries_median |>
-  mutate(monthly_avg = round(monthly_avg, 2))
+monthly_avg_all_countries_final <- monthly_avg_all_countries_final |> mutate(monthly_avg = round(monthly_avg, 2))
 
-# Checking for remaining NaN values in the median imputed dataset
-nan_check_median <- sapply(monthly_avg_all_countries_median, function(x) sum(is.na(x)))
-print(nan_check_median)
+# Checking for remaining NaN values in the final dataset
+nan_check_final <- monthly_avg_all_countries_final |> summarize_all(~sum(is.na(.)))
+knitr::kable(nan_check_final)
 
-# Display rows with NaN values in the median imputed dataset
-rows_with_nan_median <- monthly_avg_all_countries_median[apply(monthly_avg_all_countries_median, 1, function(row) any(is.na(row))), ]
-print(rows_with_nan_median)
+# Display rows with NaN values in the final dataset
+rows_with_nan_final <- monthly_avg_all_countries_final |> filter(is.na(monthly_avg))
+print(rows_with_nan_final)
 
-# Filter the data for Afghanistan in the year 1839
-afghanistan_1839_median <- monthly_avg_all_countries_median |>
+# Filter the data for Afghanistan in the year 1839 (previously missing data for the entire year)
+afghanistan_1839 <- monthly_avg_all_countries_final |>
   filter(Country == "Afghanistan" & year == 1839)
 
-# Display the filtered data
-print(afghanistan_1839_median)
+# Display the filtered data for Afghanistan in 1839
+knitr::kable(afghanistan_1839, caption = "Filled missing data for Afghanistan in 1839", digits = 2)
 ```
 
 ## Joining with Country Codes
@@ -185,7 +172,7 @@ country_codes <- read_csv("../data/country_codes.csv")
 
 joinedDT <-
   full_join(
-    monthly_avg_all_countries_filled,
+    monthly_avg_all_countries_final,
     country_codes,
     by = c("Country")
   )
@@ -231,7 +218,7 @@ country_codes$Country <- gsub("Timor-Leste", "Timor Leste", country_codes$Countr
 country_codes$Country <- gsub(" and ", " And ", country_codes$Country)
 
 
-monthly_avg_all_countries_filled$Country <- gsub("\\s*\\([^)]*\\)|\\s*\\[[^]]*\\]|\\s+Islands", "",monthly_avg_all_countries_filled$Country)
+monthly_avg_all_countries_final$Country <- gsub("\\s*\\([^)]*\\)|\\s*\\[[^]]*\\]|\\s+Islands", "",monthly_avg_all_countries_final$Country)
 ```
 
 Ensure that there are no more country missing from IBAN [(ISO 3166)](https://www.iban.com/country-codes)
@@ -239,7 +226,7 @@ Ensure that there are no more country missing from IBAN [(ISO 3166)](https://www
 ```{r, message = FALSE, warning = FALSE}
 joinedDT <-
   full_join(
-    monthly_avg_all_countries_filled,
+    monthly_avg_all_countries_final,
     country_codes,
     by = c("Country")
   )
@@ -259,7 +246,7 @@ Then display the final cleaned data
 ```{r, message = FALSE, warning = FALSE}
 innerjoinedDT <-
   inner_join(
-    monthly_avg_all_countries_filled,
+    monthly_avg_all_countries_final,
     country_codes,
     by = c("Country")
   )
