@@ -77,6 +77,7 @@ Additionally, a choropleth map will be introduced to further visualize the rate 
 -   **Interactive Tooltip**: Display detailed information about each country when hovered over, such as exact temperature changes, historical data, and other relevant metrics.
 
 # Data Cleaning
+
 In this portion, the dplyr and zoo libraries were used. We converted the date column to Date format and extracted the year and month. The data was then grouped by country, year, and month to calculate the average temperature, rounded to two decimal places. An initial check for NaN values was performed, displaying rows with missing values. Rows related to "Antarctica" were removed due to complete NaN values. The NaN values were filled using linear interpolation and forward/backward filling using the zoo library. The final values were then rounded to two decimal places. A final check for NaN values was conducted, and the imputed temperature data for Afghanistan in 1839 was filtered, as the entire was filled with NaN values, and displayed to validate the imputation process.
 
 After the entire process, an example of the country afganistan was used to show the missing data in 1839, which was then filled using interpolation, which the data could be referenced using the year 1843, which had no missing values.
@@ -192,29 +193,34 @@ With reference with the country code from IBAN [(ISO 3166)](https://www.iban.com
 ```{r, message = FALSE, warning = FALSE}
 country_codes$Country <- gsub("\\s*\\([^)]*\\)|\\s*\\[[^]]*\\]|\\s+Islands", "", country_codes$Country)
 
-country_codes$Country <- gsub("Russian Federation", "Russia", country_codes$Country)
-country_codes$Country <- gsub("United States of America", "United States", country_codes$Country)
-country_codes$Country <- gsub("United Kingdom of Great Britain and Northern Ireland", "United Kingdom", country_codes$Country)
-country_codes$Country <- gsub("Viet Nam", "Vietnam", country_codes$Country)
-country_codes$Country <- gsub("Bonaire, Sint Eustatius and Saba", "Bonaire, Saint Eustatius And Saba", country_codes$Country)
-country_codes$Country <- gsub("Myanmar", "Burma", country_codes$Country)
-country_codes$Country <- gsub("Cabo Verde", "Cape Verde", country_codes$Country)
-country_codes$Country <- gsub("Czechia", "Czech Republic", country_codes$Country)
-country_codes$Country <- gsub("Côte d'Ivoire", "Côte D'Ivoire", country_codes$Country)
-country_codes$Country <- gsub("Micronesia", "Federated States Of Micronesia", country_codes$Country)
-country_codes$Country <- gsub("French Southern Territories", "French Southern And Antarctic Lands", country_codes$Country)
-country_codes$Country <- gsub("Guinea-Bissau", "Guinea Bissau", country_codes$Country)
-country_codes$Country <- gsub("Heard Island and McDonald", "Heard Island And Mcdonald", country_codes$Country)
-country_codes$Country <- gsub("Isle of Man", "Isle Of Man", country_codes$Country)
-country_codes$Country <- gsub("Macao", "Macau", country_codes$Country)
-country_codes$Country <- gsub("Republic of North Macedonia", "Macedonia", country_codes$Country)
-country_codes$Country <- gsub("Palestine, State of", "Palestina", country_codes$Country)
+# Create a named vector with the mappings
+country_mappings <- c(
+  "Russian Federation" = "Russia",
+  "United States of America" = "United States",
+  "United Kingdom of Great Britain and Northern Ireland" = "United Kingdom",
+  "Viet Nam" = "Vietnam",
+  "Bonaire, Sint Eustatius and Saba" = "Bonaire, Saint Eustatius And Saba",
+  "Myanmar" = "Burma",
+  "Cabo Verde" = "Cape Verde",
+  "Czechia" = "Czech Republic",
+  "Côte d'Ivoire" = "Côte D'Ivoire",
+  "Micronesia" = "Federated States Of Micronesia",
+  "French Southern Territories" = "French Southern And Antarctic Lands",
+  "Guinea-Bissau" = "Guinea Bissau",
+  "Heard Island and McDonald" = "Heard Island And Mcdonald",
+  "Isle of Man" = "Isle Of Man",
+  "Macao" = "Macau",
+  "Republic of North Macedonia" = "Macedonia",
+  "Palestine, State of" = "Palestina",
+  "Saint Vincent and The Grenadines" = "Saint Vincent And The Grenadines",
+  "South Georgia And The South Sandwich" = "South Georgia And The South Sandwich Isla",
+  "Syrian Arab Republic" = "Syria",
+  "Tanzania, United Republic of" = "Tanzania",
+  "Timor-Leste" = "Timor Leste"
+)
 
-country_codes$Country <- gsub("Saint Vincent and The Grenadines", "Saint Vincent And The Grenadines", country_codes$Country)
-country_codes$Country <- gsub("South Georgia And The South Sandwich", "South Georgia And The South Sandwich Isla", country_codes$Country)
-country_codes$Country <- gsub("Syrian Arab Republic", "Syria", country_codes$Country)
-country_codes$Country <- gsub("Tanzania, United Republic of", "Tanzania", country_codes$Country)
-country_codes$Country <- gsub("Timor-Leste", "Timor Leste", country_codes$Country)
+# Apply the mappings
+country_codes$Country <- plyr::mapvalues(country_codes$Country, from = names(country_mappings), to = country_mappings)
 country_codes$Country <- gsub(" and ", " And ", country_codes$Country)
 
 
