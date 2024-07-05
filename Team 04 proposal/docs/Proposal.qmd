@@ -1,0 +1,280 @@
+---
+title: "Team 04 Project Proposal"
+format: html
+editor: visual
+embed-resources: true
+toc: true
+toc-depth: 2
+authors: [WONG CHUN OWEN, 
+          ONG JU EN NIGEL,
+          SHERWYN CHAN YIN KIT,
+          ASHSYAHID BIN HUSSIN,
+          LIM XUAN YU]
+description: "Visualising the climate change over time"
+---
+
+For this document, the following packages are required:
+
+```{r, message = FALSE, warning = FALSE}
+library(tidyverse)
+library(knitr)
+library(zoo)
+library(dplyr)
+```
+
+# Original Data Visualization in Climate Change
+
+The ongoing dialogue surrounding climate change has increasingly focused on the empirical data that underscores global temperature trends. [NOAA](https://www.ncei.noaa.gov/access/monitoring/monthly-report/global/202313){target="_blank"}'s recent visualization of global temperature anomalies from 1880 to 2023 offers a comprehensive view of the planet's warming trajectory. This project aims to elucidate the correlation between anthropogenic activities and climate change, highlighting how industrialization and carbon emissions have influenced global temperatures.
+
+The visualization spans over a century of data, capturing periods of significant climatic shifts. Despite its clarity in depicting long-term trends, the inclusion of interactive features (as illustrated in @fig-GlobalLandOcean) enhances user engagement with the data. However, there is potential for further refinement. Incorporating more dynamic elements such as temporal sliders, geospatial overlays, and chloropleth map integration could offer a more nuanced understanding of how specific policies and global events impact climate change on a regional and global scale.
+
+![Global temperature deviation from the 20th century average temperature of 13.9°C (57.0°F) from 1850 to 2023.](../imgs/global_and_sea.png){#fig-GlobalLandOcean}
+
+# Critical Assessment of the Original Visualization
+
+The plot visualizes two variables: global temperature anomalies (quantitative) and time (categorical/DateTime). The x-axis represents time in years, while the y-axis shows the temperature anomalies in Celsius and Fahrenheit. The plot is intuitive and effectively communicates the overall trend of increasing global temperatures over time.
+
+The chart is clear and easy to read, with temperature anomalies clearly dilineated by year. The use of blue and red colors to differentiate periods of negative and positive value temperature anomalies from the 20th century average of 13.9°C is contributes to the clarity of the plot.
+
+The axes are well-labeled, and the inclusion of temperature anomalies in both Celsius and Fahrenheit on the right axis helps cater to different audiences. The chart covers a long historical period, providing a comprehensive view of temperature changes over time.
+
+Overall the plot is effective in communicating the relationship between global temperature anomalies and time. However, there are shortcomings that the team has identified:
+
+1.  **Interactivity**: The visualization lacks interactive features that would allow users to explore the data further, such as zooming in on specific time frames or regions, filtering data, or viewing additional information on specific data points.
+
+2.  **Lack of Detail**: The chart does not provide specific values for each year, making it difficult to discern exact temperature anomalies.
+
+3.  **Legend**: The chart lacks a legend to explain the color coding for positive and negative temperature anomalies.
+
+4.  **Background**: The choice of background color may not be optimal for all users, and providing options for different color schemes would improve accessibility.
+
+5.  **Color choice**: The use of red and blue colors to represent positive and negative temperature anomalies may not be accessible to colorblind users.
+
+6.  **Cluttered data**: Displaying data in long time frame from 1850 to 2023 in a single chart may make it difficult to discern specific trends or patterns.
+
+7.  **Context**: The visualization lacks context on different factors that may influence global temperature anomalies, such as regional variations, country-specific data, or the impact of specific events.
+
+The observations above highlight areas where the original visualization could be improved to enhance user experience and provide a more comprehensive understanding of the data.
+
+# Proposed Improvements
+
+The original visualisation will be enhanced with the following features:
+
+-   **Dynamic Range Slider**: A dynamic range slider will be added, allowing users to zoom into specific periods for detailed analysis or display a timelapse of temperature changes from 1930 to 2023.
+
+-   **Customizable Metrics Selection**: A feature allowing users to choose which metrics to display, such as temperature changes or carbon emissions.
+
+-   **Linked Graphs**: Display linked line or bar graphs below the choropleth map that update in real-time based on the selected country or region, showing detailed trends and data points.
+
+-   **Predictive Model**: By adding a predictive model, users can visualise what the discernable future may hold for global warming.
+
+## Choropleth Map Integration
+
+Additionally, a choropleth map will be introduced to further visualize the rate of change of temperature by country:
+
+-   **Data Representation**: Each country will have a set colour, with gradients shifting to reflect temperature changes over time.
+
+-   **Interactive Tooltip**: Display detailed information about each country when hovered over, such as exact temperature changes, historical data, and other relevant metrics.
+
+# Data Cleaning
+
+In this portion, the dplyr and zoo libraries were used. We converted the date column to Date format and extracted the year and month. The data was then grouped by country, year, and month to calculate the average temperature, rounded to two decimal places. An initial check for NaN values was performed, displaying rows with missing values. Rows related to "Antarctica" were removed due to complete NaN values. The NaN values were filled using linear interpolation and forward/backward filling using the zoo library. The final values were then rounded to two decimal places. A final check for NaN values was conducted, and the imputed temperature data for Afghanistan in 1839 was filtered, as the entire was filled with NaN values, and displayed to validate the imputation process.
+
+After the entire process, an example of the country afganistan was used to show the missing data in 1839, which was then filled using interpolation, which the data could be referenced using the year 1843, which had no missing values.
+
+```{r, message = FALSE, warning = FALSE}
+
+# Load the data
+data <- read_csv("../data/country_temp.csv")
+
+# Convert the date column to Date format and extract the year and month
+data <- data |>
+  mutate(dt = as.Date(dt, format = "%Y-%m-%d"),
+         year = as.numeric(format(dt, "%Y")),
+         month = format(dt, "%m"))
+
+# Group by country, year, and month, then calculate the average temperatures rounded to 2 decimal points
+monthly_avg_all_countries_initial <- data |>
+  group_by(Country, year, month) |>
+  summarize(monthly_avg = round(mean(AverageTemperature, na.rm = TRUE), 2), .groups = 'drop')
+
+# Display the head of the initial data frame
+knitr::kable(head(monthly_avg_all_countries_initial), caption = "Head of Monthly Average Temperatures by Country", digits = 2)
+
+# Check for NA and NaN values in the monthly_avg_all_countries_initial dataframe
+nan_check_initial <- monthly_avg_all_countries_initial |> summarize_all(~sum(is.na(.)))
+knitr::kable(nan_check_initial)
+
+# Display rows with NA and NaN values
+rows_with_nan_initial <- monthly_avg_all_countries_initial |> filter(is.na(monthly_avg))
+knitr::kable(head(rows_with_nan_initial, 10), caption = "Rows with Na & NaN values")
+
+# Filtered data for Afghanistan in the year 1839 to show missing NaN values for the entire year
+afghanistan_1839 <- monthly_avg_all_countries_initial |>
+  filter(Country == "Afghanistan" & year == 1839)
+knitr::kable(afghanistan_1839, caption = "Missing data for Afghanistan in 1839", digits = 2)
+
+# Filtered data for Afghanistan in the year 1843 to show no missing values for referencing the effect of using interpolation later on.
+afghanistan_1840 <- monthly_avg_all_countries_initial |>
+  filter(Country == "Afghanistan" & year == 1843)
+knitr::kable(afghanistan_1840, caption = "No missing data for Afghanistan in 1843", digits = 2)
+
+# Remove rows with "Antarctica" from the dataset as the entire dataset for it is NaN
+monthly_avg_all_countries_initial <- monthly_avg_all_countries_initial |> filter(Country != "Antarctica")
+
+# Verify that "Antarctica" rows are removed
+print(monthly_avg_all_countries_initial |> filter(Country == "Antarctica"))
+
+# Function to fill NaN values using zoo library
+fill_nan <- function(df) {
+  df |>
+    group_by(Country, month) |>
+    # fills missing values by estimating values between two known points
+    # When there are non-missing values both before and after a missing value, linear interpolation will successfully fill the missing value.
+    mutate(monthly_avg = na.approx(monthly_avg, na.rm = FALSE, rule = 2)) |>
+    # Takes the next observed non-missing value and uses it to fill the current missing value.
+    # Some country might be missing the first value of the year, so we use the next observed non-missing value to fill the current missing value.
+    mutate(monthly_avg = ifelse(is.na(monthly_avg), zoo::na.locf(monthly_avg, fromLast = TRUE, na.rm = FALSE), monthly_avg)) |>
+    # Takes the last observed non-missing value and uses it to fill the current missing value.
+    mutate(monthly_avg = ifelse(is.na(monthly_avg), zoo::na.locf(monthly_avg, na.rm = FALSE), monthly_avg)) |>
+    ungroup()
+}
+
+# Apply fill_nan function
+monthly_avg_all_countries_final <- monthly_avg_all_countries_initial |> fill_nan()
+
+# Round the final dataframe to 2 decimal places
+monthly_avg_all_countries_final <- monthly_avg_all_countries_final |> mutate(monthly_avg = round(monthly_avg, 2))
+
+# Checking for remaining NaN values in the final dataset
+nan_check_final <- monthly_avg_all_countries_final |> summarize_all(~sum(is.na(.)))
+knitr::kable(nan_check_final)
+
+# Display rows with NaN values in the final dataset
+rows_with_nan_final <- monthly_avg_all_countries_final |> filter(is.na(monthly_avg))
+print(rows_with_nan_final)
+
+# Filter the data for Afghanistan in the year 1839 (previously missing data for the entire year)
+afghanistan_1839 <- monthly_avg_all_countries_final |>
+  filter(Country == "Afghanistan" & year == 1839)
+
+# Display the filtered data for Afghanistan in 1839
+knitr::kable(afghanistan_1839, caption = "Filled missing data for Afghanistan in 1839", digits = 2)
+```
+
+## Joining with Country Codes
+
+We will now join the cleaned data with the country codes dataset to obtain the alpha-2 and alpha-3 codes for each country. This will allow us to create a choropleth map with the country codes as identifiers. Let us check for countries with missing data after the join using column Alpha2 and clean the data accordingly.
+
+```{r, message = FALSE, warning = FALSE}
+
+country_codes <- read_csv("../data/country_codes.csv")
+
+
+joinedDT <-
+  full_join(
+    monthly_avg_all_countries_final,
+    country_codes,
+    by = c("Country")
+  )
+
+
+missing_data <- joinedDT %>% filter(is.na(joinedDT$`Alpha2`))
+
+unique_countries <- missing_data %>%
+  distinct(Country, .keep_all = TRUE)
+
+# Print the unique countries
+print(unique_countries)
+```
+
+With reference with the country code from IBAN [(ISO 3166)](https://www.iban.com/country-codes), we will adjust the format of the country from IBAN data set to the kaggle dataset [(Climate Change: Earth Surface Temperature Data, 2017)](https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data/data)
+
+```{r, message = FALSE, warning = FALSE}
+country_codes$Country <- gsub("\\s*\\([^)]*\\)|\\s*\\[[^]]*\\]|\\s+Islands", "", country_codes$Country)
+
+# Create a named vector with the mappings
+country_mappings <- c(
+  "Russian Federation" = "Russia",
+  "United States of America" = "United States",
+  "United Kingdom of Great Britain and Northern Ireland" = "United Kingdom",
+  "Viet Nam" = "Vietnam",
+  "Bonaire, Sint Eustatius and Saba" = "Bonaire, Saint Eustatius And Saba",
+  "Myanmar" = "Burma",
+  "Cabo Verde" = "Cape Verde",
+  "Czechia" = "Czech Republic",
+  "Côte d'Ivoire" = "Côte D'Ivoire",
+  "Micronesia" = "Federated States Of Micronesia",
+  "French Southern Territories" = "French Southern And Antarctic Lands",
+  "Guinea-Bissau" = "Guinea Bissau",
+  "Heard Island and McDonald" = "Heard Island And Mcdonald",
+  "Isle of Man" = "Isle Of Man",
+  "Macao" = "Macau",
+  "Republic of North Macedonia" = "Macedonia",
+  "Palestine, State of" = "Palestina",
+  "Saint Vincent and The Grenadines" = "Saint Vincent And The Grenadines",
+  "South Georgia And The South Sandwich" = "South Georgia And The South Sandwich Isla",
+  "Syrian Arab Republic" = "Syria",
+  "Tanzania, United Republic of" = "Tanzania",
+  "Timor-Leste" = "Timor Leste"
+)
+
+# Apply the mappings
+country_codes$Country <- plyr::mapvalues(country_codes$Country, from = names(country_mappings), to = country_mappings)
+country_codes$Country <- gsub(" and ", " And ", country_codes$Country)
+
+
+monthly_avg_all_countries_final$Country <- gsub("\\s*\\([^)]*\\)|\\s*\\[[^]]*\\]|\\s+Islands", "",monthly_avg_all_countries_final$Country)
+```
+
+Ensure that there are no more country missing from IBAN [(ISO 3166)](https://www.iban.com/country-codes)
+
+```{r, message = FALSE, warning = FALSE}
+joinedDT <-
+  full_join(
+    monthly_avg_all_countries_final,
+    country_codes,
+    by = c("Country")
+  )
+
+
+missing_data <- joinedDT %>% filter(is.na(joinedDT$`Alpha2`))
+
+unique_countries <- missing_data %>%
+  distinct(Country, .keep_all = TRUE)
+
+# Print the unique countries
+print(unique_countries)
+```
+
+Then display the final cleaned data
+
+```{r, message = FALSE, warning = FALSE}
+innerjoinedDT <-
+  inner_join(
+    monthly_avg_all_countries_final,
+    country_codes,
+    by = c("Country")
+  )
+
+
+# Check the cleaned data
+print(innerjoinedDT)
+
+```
+
+# Conclusion
+
+The data is now ready for visualization. The next step will be to create a plot that can effectively communicate the relationship between global temperature anomalies and anthropogenic activities over time, and additionally allow curious readers to explore the data even further using interactivity. We will use Plotly to create the plot and add interactivity.
+
+###### References
+
+::: {style="font-size: 12px"}
+NCEI.Monitoring.Info\@noaa.gov. (n.d.). Annual 2023 Global Climate Report \| National Centers for Environmental Information (NCEI). <https://www.ncei.noaa.gov/access/monitoring/monthly-report/global/202313>
+
+List of country codes by alpha-2, alpha-3 code (ISO 3166). (n.d.). <https://www.iban.com/country-codes>
+
+Change, N. G. C. (n.d.). Global Surface Temperature \| NASA Global Climate Change. Climate Change: Vital Signs of the Planet.<https://climate.nasa.gov/vital-signs/global-temperature/?intent=121>
+
+Climate change: Earth surface temperature data. (2017, May 1). Kaggle. <https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data/data>
+:::

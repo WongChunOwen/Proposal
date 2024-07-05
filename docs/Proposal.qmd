@@ -19,6 +19,7 @@ For this document, the following packages are required:
 library(tidyverse)
 library(knitr)
 library(zoo)
+library(plotly)
 library(dplyr)
 ```
 
@@ -265,8 +266,16 @@ print(innerjoinedDT)
 
 # Conclusion
 
-The data is now ready for visualization. The next step will be to create a plot that can effectively communicate the relationship between global temperature anomalies and anthropogenic activities over time, and additionally allow curious readers to explore the data even further using interactivity. We will use Plotly to create the plot and add interactivity.
+The data is now ready for visualization. The next step will be to create a plot that can effectively communicate the relationship between global temperature anomalies and anthropogenic activities over time, and additionally allow curious readers to explore the data even further using interactivity. We will use Plotly to create the plot and add interactivity similar to the graph below.
 
+```{r, message = FALSE, warning = FALSE}
+df <- read.csv("../data/graph.csv")
+p <- plot_geo(df, locationmode = 'world') %>%
+  add_trace(    z = ~df$new_cases_per_million, locations = df$code, frame=~df$start_of_week,
+                color = ~df$new_cases_per_million)
+
+p
+```
 ###### References
 
 ::: {style="font-size: 12px"}
